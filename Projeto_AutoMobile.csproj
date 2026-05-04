@@ -7,13 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Projeto_AutoMobile\" />
     <Folder Include="ViewModels\Clientes\" />
     <Folder Include="ViewModels\Veiculos\" />
     <Folder Include="ViewModels\Reservas\" />
     <Folder Include="Views\Clientes\" />
     <Folder Include="Views\Reservas\" />
     <Folder Include="Views\Veiculos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.26" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
