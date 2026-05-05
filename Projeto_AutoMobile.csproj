@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Projeto_AutoMobile\" />
     <Folder Include="ViewModels\Clientes\" />
     <Folder Include="ViewModels\Veiculos\" />
     <Folder Include="ViewModels\Reservas\" />
