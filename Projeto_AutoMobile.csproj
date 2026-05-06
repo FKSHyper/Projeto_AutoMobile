@@ -7,9 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\Clientes\" />
-    <Folder Include="ViewModels\Veiculos\" />
-    <Folder Include="ViewModels\Reservas\" />
+    <Folder Include="ViewModels\Cliente\" />
+    <Folder Include="ViewModels\Reserva\" />
     <Folder Include="Views\Clientes\" />
     <Folder Include="Views\Reservas\" />
     <Folder Include="Views\Veiculos\" />
