@@ -17,12 +17,6 @@ a {
   border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
@@ -40,13 +34,13 @@ button.accept-policy {
 }
 
 .wrapper {
-    flex-grow: 1; /* This takes up 100% minus the footer */
+    flex-grow: 1;
     display: flex;
-    overflow: hidden; /* Keeps the main content from breaking the layout */
+    overflow: hidden;
 }
 
 footer {
-    flex-shrink: 0; /* Ensures the footer doesn't get squished */
+    flex-shrink: 0;
 }
 
 
@@ -79,7 +73,6 @@ footer {
     transform: translateX(0);
 }
 
-/*-----*/
 #sidebar-toggle:not(:checked) ~ .wrapper .perm {
     display: none;
 }
@@ -95,3 +88,23 @@ footer {
 #sidebar-toggle:checked ~ .wrapper .not-perm {
     display: none;
 }
+
+/*Nao Funciona*/
+/*.nav-pills a.nav-link {
+    color: #6c757d;
+    background-color: red;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border-left: 3px solid transparent;
+}
+.nav-pills a.nav-link:hover {
+    background-color: lightgray;
+    color: red;
+    border-left: 3px solid #1b6ec2;
+}*/
+
+/*.nav-pills .nav-item a.nav-link {
+    background-color: lightgray;
+    color: red;
+    border-left: 3px solid #1b6ec2;
+}*/
