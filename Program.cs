@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Projeto_AutoMobile.Data;
+
 namespace Projeto_AutoMobile
 {
     public class Program
@@ -8,6 +11,9 @@ namespace Projeto_AutoMobile
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<Projeto_AutoMobileContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
