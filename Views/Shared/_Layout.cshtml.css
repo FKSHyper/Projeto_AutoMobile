@@ -67,3 +67,23 @@ footer {
 #sidebar-toggle:checked ~ .wrapper .not-perm {
     display: none;
 }
+
+/*Nao Funciona*/
+/*.nav-pills a.nav-link {
+    color: #6c757d;
+    background-color: red;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border-left: 3px solid transparent;
+}
+.nav-pills a.nav-link:hover {
+    background-color: lightgray;
+    color: red;
+    border-left: 3px solid #1b6ec2;
+}*/
+
+/*.nav-pills .nav-item a.nav-link {
+    background-color: lightgray;
+    color: red;
+    border-left: 3px solid #1b6ec2;
+}*/

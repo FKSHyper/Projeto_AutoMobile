@@ -7,7 +7,15 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Projeto_AutoMobile.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
 </head>
+@functions {
+        string IsActive(string controller)
+        {
+                var current = ViewContext.RouteData.Values["controller"]?.ToString();
+                return string.Equals(current, controller, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+        }
+}
 <body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
     <input type="checkbox" id="sidebar-toggle" class="d-none">
 
@@ -23,8 +31,38 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a class="nav-link active py-1 px-2 text-nowrap" asp-controller="Home" asp-action="Index">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Home")" asp-controller="Home" asp-action="Index">
                         Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Clientes")" asp-controller="Clientes" asp-action="Index">
+                        Clientes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Reservas")" asp-controller="Reservas" asp-action="Index">
+                        Reservas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Carros")" asp-controller="Carros" asp-action="Index">
+                        Carros
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive(" Motas")" asp-controller="Motas" asp-action="Index">
+                        Motas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Camioes")" asp-controller="Camioes" asp-action="Index">
+                        Camiões
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Camionetas")" asp-controller="Camionetas" asp-action="Index">
+                        Camionetas
                     </a>
                 </li>
             </ul>
