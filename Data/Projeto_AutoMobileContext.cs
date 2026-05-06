@@ -22,6 +22,7 @@ namespace Projeto_AutoMobile.Data
         public DbSet<Empresa> Empresas { get; set; }
 
         public DbSet<Cliente> Clientes { get; set; }
+        // public DbSet<Reserva> Reservas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

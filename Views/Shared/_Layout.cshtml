@@ -21,7 +21,8 @@
 
     <div class="wrapper">
         <div class="hover-trigger"></div>
-        <nav id="sidebar" class="bg-white border-end vh-100 p-3 shadow" style=" width:200px;">
+        <nav id="sidebar" class="border-end vh-100 p-3 shadow" style=" width:200px;">
+
             <label for="sidebar-toggle" class="btn btn-sm btn-outline-secondary float-end perm-toggle">
                 <span class="perm">👁️</span>
                 <span class="not-perm">🙈</span>
@@ -67,19 +68,37 @@
             </ul>
 
             <hr class="my-2">
+            <select id="themeSelector" class="form-select w-auto">
+                <option value="light">Light Mode</option>
+                <option value="dark">Dark Mode</option>
+            </select>
         </nav>
 
         <main class="p-4 flex-grow-1">
-            <label for="sidebar-toggle" class="btn btn-outline-dark">☰ Menu</label>
+            <label for="sidebar-toggle" class="btn btn-theme-menu">☰ Menu</label>
             @RenderBody()
         </main>
     </div>
-    <footer class="bg-light">
-        <div class="d-flex flex-column align-items-start small text-secondary p-2">
+    <footer class="border-top">
+        <div class="d-flex flex-column align-items-start small p-2 footer-text">
             <div class="fw-bold text-nowrap">Trabalho do Grupo 1:</div>
             <div class="text-nowrap">Rafael, João R., Leonor , Madalena, Martim</div>
         </div>
     </footer>
+    <script>
+        const selector = document.getElementById('themeSelector');
+
+        selector.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            selector.value = savedTheme;
+        }
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

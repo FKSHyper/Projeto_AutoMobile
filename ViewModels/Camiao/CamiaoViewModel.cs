@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Projeto_AutoMobile.Data.Projeto_AutoMobile;
 
-namespace Projeto_AutoMobile.ViewModels.Camioneta
+namespace Projeto_AutoMobile.ViewModels.Camiao
 {
-    public class RegistoCamionetaViewModel
+    public class CamiaoViewModel
     {
         [Required(ErrorMessage = "A matrícula é obrigatória.")]
         [RegularExpression(@"^([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})$",
@@ -20,16 +21,14 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
         [Display(Name = "Preço por Dia")]
         public decimal PrecoDia { get; set; }
 
-        [Required(ErrorMessage = "O número de eixos é obrigatório.")]
-        [Range(2, 3, ErrorMessage = "O número de eixos de uma camioneta tem de ser 2 ou 3.")]
-        [Display(Name = "Número de Eixos")]
-        public int NumeroEixos { get; set; }
-
         [Required(ErrorMessage = "O estado é obrigatório.")]
-        public string Estado { get; set; }
+        public EstadoVeiculo Estado { get; set; }
 
-        [Required(ErrorMessage = "O número máximo de passageiros é obrigatório.")]
-        [Display(Name = "Máximo de Passageiros")]
-        public int NumeroMaximoPassageiros { get; set; }
+        [Required(ErrorMessage = "A capacidade de carga é obrigatória.")]
+        [Display(Name = "Capacidade de Carga (Kg)")]
+        public int CapacidadeCarga { get; set; }
+
+        public DateTime? DataDisponibilidade { get; set; }
+
     }
 }

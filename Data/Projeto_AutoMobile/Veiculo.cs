@@ -30,5 +30,8 @@ namespace Projeto_AutoMobile.Data.Projeto_AutoMobile
         //data prevista para passar ao estado de “disponível”
         public DateTime? DataDisponibilidade { get; set; }
 
+        public int EmpresaId { get; set; }
+        public Empresa Empresa { get; set; }
+
     }
 }
