@@ -6,6 +6,27 @@
 
 <h1>Index</h1>
 
+@if (TempData["Alarmes"] != null)
+{
+    var avisos = TempData["Alarmes"] as List<string>;
+    <div class="alert alert-danger mt-3" style="border: 2px solid red; background-color: #ffe6e6; padding: 15px;">
+        <h4 style="color: red;"> Alarmes do Sistema: </h4>
+        <ul style="margin-bottom: 0;">
+            @foreach (var aviso in avisos)
+            {
+                <li><strong>@aviso</strong></li>
+            }
+        </ul>
+    </div>
+}
+
+@if (TempData["Mensagem"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["Mensagem"]
+    </div>
+}
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
