@@ -25,6 +25,9 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
         [Display(Name = "Número de Eixos")]
         public int NumeroEixos { get; set; }
 
+        [Required(ErrorMessage = "O estado é obrigatório.")]
+        public string Estado { get; set; }
+
         [Required(ErrorMessage = "O número máximo de passageiros é obrigatório.")]
         [Display(Name = "Máximo de Passageiros")]
         public int NumeroMaximoPassageiros { get; set; }

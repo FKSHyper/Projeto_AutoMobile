@@ -20,6 +20,9 @@ namespace Projeto_AutoMobile.ViewModels.Camiao
         [Display(Name = "Preço por Dia")]
         public decimal PrecoDia { get; set; }
 
+        [Required(ErrorMessage = "O estado é obrigatório.")]
+        public string Estado { get; set; }
+
         [Required(ErrorMessage = "A capacidade de carga é obrigatória.")]
         [Display(Name = "Capacidade de Carga (Kg)")]
         public int CapacidadeCarga { get; set; }
