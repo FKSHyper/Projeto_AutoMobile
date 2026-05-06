@@ -4,7 +4,11 @@
     {
         public int Id { get; set; }
 
-        private List<Veiculo> frota;
+        public List<Veiculo> frota;
+
+        // --- Relação com os Veículos --- //
+        
+        public virtual ICollection<Veiculo> Frota { get; set; } = new List<Veiculo>();
 
         // Guarda a data atual para o SIM
         public DateTime DataAtual { get; private set; }
