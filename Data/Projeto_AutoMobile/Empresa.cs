@@ -2,6 +2,8 @@
 {
     public class Empresa
     {
+        public int Id { get; set; }
+
         private List<Veiculo> frota;
 
         // Guarda a data atual para o SIM
