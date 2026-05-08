@@ -24,7 +24,7 @@ namespace Projeto_AutoMobile.Data.Projeto_AutoMobile
         public string Matricula { get; set; } = string.Empty;
         public string Marca {  get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
-        public Decimal PrecoDia { get; set; }
+        public float PrecoDia { get; set; }
         public EstadoVeiculo Estado { get; set; } //o Estado é do tipo EtsadoVeiculo
 
         //data prevista para passar ao estado de “disponível”
