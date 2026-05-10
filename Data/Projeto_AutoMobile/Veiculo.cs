@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Projeto_AutoMobile.Data.Projeto_AutoMobile
 {
@@ -24,7 +25,9 @@ namespace Projeto_AutoMobile.Data.Projeto_AutoMobile
         public string Matricula { get; set; } = string.Empty;
         public string Marca {  get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
-        public Decimal PrecoDia { get; set; }
+
+        [Precision(8, 2)]
+        public decimal PrecoDia { get; set; }
         public EstadoVeiculo Estado { get; set; } //o Estado é do tipo EtsadoVeiculo
 
         //data prevista para passar ao estado de “disponível”
