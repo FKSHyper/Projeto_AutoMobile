@@ -173,5 +173,30 @@ namespace Projeto_AutoMobile.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        public IActionResult Faturacao()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Faturacao(DateTime dataInicio, DateTime dataFim)
+        {
+            if (dataFim < dataInicio)
+            {
+                ModelState.AddModelError("", "A data final não pode ser anterior à data inicial.");
+                return View();
+            }
+
+            var total = await _context.Reservas
+                .Where(r => r.DataInicio >= dataInicio && r.DataFim <= dataFim)
+                .SumAsync(r => r.PrecoTotal);
+
+            ViewBag.TotalFaturacao = total;
+            ViewBag.DataInicio = dataInicio;
+            ViewBag.DataFim = dataFim;
+
+            return View();
+        }
     }
 }
