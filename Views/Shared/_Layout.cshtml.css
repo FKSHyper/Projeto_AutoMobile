@@ -43,10 +43,10 @@ footer {
     z-index: 1100;
 }
 
-    .hover-trigger:hover ~ #sidebar,
-    #sidebar:hover {
-        transform: translateX(0);
-    }
+.hover-trigger:hover ~ #sidebar,
+#sidebar:hover {
+    transform: translateX(0);
+}
 
 #sidebar-toggle:checked ~ .wrapper #sidebar {
     transform: translateX(0);
@@ -68,22 +68,7 @@ footer {
     display: none;
 }
 
-/*Nao Funciona*/
-/*.nav-pills a.nav-link {
-    color: #6c757d;
-    background-color: red;
+.nav-item {
     font-weight: 500;
-    transition: all 0.2s ease-in-out;
-    border-left: 3px solid transparent;
 }
-.nav-pills a.nav-link:hover {
-    background-color: lightgray;
-    color: red;
-    border-left: 3px solid #1b6ec2;
-}*/
 
-/*.nav-pills .nav-item a.nav-link {
-    background-color: lightgray;
-    color: red;
-    border-left: 3px solid #1b6ec2;
-}*/

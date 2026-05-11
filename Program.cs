@@ -12,8 +12,10 @@ namespace Projeto_AutoMobile
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
             builder.Services.AddDbContext<Projeto_AutoMobileContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(connectionString));
 
             var app = builder.Build();
 

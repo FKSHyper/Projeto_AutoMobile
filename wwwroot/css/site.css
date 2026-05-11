@@ -13,6 +13,7 @@ html {
 }
 
 [data-theme='dark'] {
+    color-scheme: dark;
     --bg-body: #121212;
     --bg-sidebar: #1e1e1e;
     --bg-footer: #1e1e1e;
@@ -21,6 +22,7 @@ html {
     --primary-action: #ff4d00;
     --border-color: #262626;
 }
+
 
 body {
     background-color: var(--bg-body);
@@ -62,6 +64,39 @@ footer {
 }
 .footer-text, .footer-text div {
     color: var(--text-muted) !important;
+}
+.nav-item {
+    background-color: var(--bg-sidebar);
+    border-radius: .25rem;
+    margin-top: 2px;
+}
+.nav-item:hover {
+    background-color: var(--bg-body);
+}
+.nav-link {
+    color: var(--text-muted) !important;
+}
+.nav-link:hover {
+    color: var(--text-main) !important;
+}
+.active {
+    background-color: var(--bg-body) !important;
+    color: var(--text-main) !important;
+    border: 3px solid var(--border-color) !important;
+}
+#themeSelector {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    outline: none;
+    box-shadow: none;
+}
+#themeSelector:focus {
+   
+    outline: none;
+    border-color: var(--border-color);
+    background-color: var(--bg-body);
+    color: var(--text-main);
 }
 
 @media (min-width: 768px) {
