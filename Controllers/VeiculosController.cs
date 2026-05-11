@@ -50,5 +50,18 @@ namespace Projeto_AutoMobile.Controllers
 
             return View(viewModel);
         }
+
+        // GET: Veiculos/EmManutencao
+        public async Task<IActionResult> EmManutencao()
+        {
+            // Vai buscar à Base de Dados APENAS os veículos que estão no estado EmManutencao
+            var veiculosEmManutencao = await _context.Veiculos
+                .Where(v => v.Estado == EstadoVeiculo.EmManutencao)
+                .ToListAsync();
+
+            // Envia a lista diretamente para o ecrã
+            return View(veiculosEmManutencao);
+        }
+
     }
 }

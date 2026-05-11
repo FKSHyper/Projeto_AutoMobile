@@ -71,6 +71,38 @@ namespace Projeto_AutoMobile.Migrations
                     b.ToTable("Empresas");
                 });
 
+            modelBuilder.Entity("Projeto_AutoMobile.Data.Projeto_AutoMobile.Reserva", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataFim")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("PrecoTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("VeiculoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("VeiculoId");
+
+                    b.ToTable("Reservas");
+                });
+
             modelBuilder.Entity("Projeto_AutoMobile.Data.Projeto_AutoMobile.Veiculo", b =>
                 {
                     b.Property<int>("Id")
@@ -165,6 +197,25 @@ namespace Projeto_AutoMobile.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Mota");
+                });
+
+            modelBuilder.Entity("Projeto_AutoMobile.Data.Projeto_AutoMobile.Reserva", b =>
+                {
+                    b.HasOne("Projeto_AutoMobile.Data.Projeto_AutoMobile.Cliente", "Cliente")
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Projeto_AutoMobile.Data.Projeto_AutoMobile.Veiculo", "Veiculo")
+                        .WithMany()
+                        .HasForeignKey("VeiculoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Veiculo");
                 });
 
             modelBuilder.Entity("Projeto_AutoMobile.Data.Projeto_AutoMobile.Veiculo", b =>

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Veiculo>
+
+@{
+    ViewData["Title"] = "Veículos em Manutenção";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-warning">
+        <span style="font-size: 1.2em;"></span> Veículos em Manutenção
+    </h2>
+
+    <table class="table table-hover table-bordered shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>ID / Matrícula</th>
+                <th>Tipo de Veículo</th>
+                <th>Estado Atual</th>
+                <th>Data Prevista para Fim da Manutenção</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-center p-4 fs-5 text-muted">
+                        Neste momento não existem veículos na oficina.
+                    </td>
+                </tr>
+            }
+            
+            @foreach (var veiculo in Model)
+            {
+                <tr>
+                    <td class="align-middle fw-bold">@veiculo.Id</td>
+                    
+                    <td class="align-middle">@veiculo.GetType().Name</td>
+                    
+                    <td class="align-middle">
+                        <span class="badge bg-warning text-dark" style="font-size: 0.9em;">
+                            @veiculo.Estado
+                        </span>
+                    </td>
+                    
+                    <td class="align-middle fw-bold text-danger">
+                        @if (veiculo.DataDisponibilidade.HasValue)
+                        {
+                            @veiculo.DataDisponibilidade.Value.ToShortDateString()
+                        }
+                        else
+                        {
+                            <span class="text-muted">Data não definida</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
