@@ -9,22 +9,13 @@
         public virtual ICollection<Veiculo> Frota { get; set; } = new List<Veiculo>();
 
         // Guarda a data atual para o SIM
-        public DateTime DataAtual { get; private set; }
+        public DateTime DataAtual { get; set; }
 
         public Empresa()
         {
             // Na inicialização usa a data do sistema
             DataAtual = DateTime.Now;
 
-            // -- CÓDIGO TEMPORÁRIO PARA TESTAR --
-            // Cria um veículo que expira amanhã!
-            Veiculo carroTeste = new Carro();
-            //carroTeste.Id = 1; // Ou "12-AA-34" se usarem matrículas
-            carroTeste.Estado = EstadoVeiculo.Alugado;
-            carroTeste.DataDisponibilidade = DateTime.Now.AddDays(1); // Expira amanhã
-
-            AdicionarVeiculo(carroTeste);
-            // -----------------------------------
         }
 
         // --- Métodos de Gerenciamento de Frota --- //
@@ -54,7 +45,7 @@
             {
                 if ((veiculo.Estado == EstadoVeiculo.Alugado || veiculo.Estado == EstadoVeiculo.EmManutencao || veiculo.Estado == EstadoVeiculo.Reservado) && veiculo.DataDisponibilidade.HasValue)
                 {
-                    if (DataAtual.Date >= veiculo.DataDisponibilidade.Value.Date)
+                    if (DataAtual.Date == veiculo.DataDisponibilidade.Value.Date)
                     {
                         alarmes.Add($"ALARME: O veículo com ID {veiculo.Id} terminou o período de '{veiculo.Estado}'.");
                     }

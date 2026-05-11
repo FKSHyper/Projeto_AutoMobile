@@ -25,17 +25,17 @@ namespace Projeto_AutoMobile.Data
 
         public DbSet<Reserva> Reservas { get; set; }
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        //    modelBuilder.Entity<Veiculo>()
-        //        .HasDiscriminator<string>("TipoVeiculo")
-        //        .HasValue<Camiao>("Camiao")
-        //        .HasValue<Camioneta>("Camioneta")
-        //        .HasValue<Mota>("Mota")
-        //        .HasValue<Carro>("Carro");
+            modelBuilder.Entity<Veiculo>()
+                .HasDiscriminator<string>("TipoVeiculo")
+                .HasValue<Camiao>("Camiao")
+                .HasValue<Camioneta>("Camioneta")
+                .HasValue<Mota>("Mota")
+                .HasValue<Carro>("Carro");
 
-        //}
+        }
     }
 }

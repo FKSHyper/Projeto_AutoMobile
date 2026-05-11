@@ -21,28 +21,41 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Empresas
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index()
         {
-            Empresa empresa;
+            // Vai buscar a primeira empresa que encontrar (como só há uma, é sempre a mesma)
+            var empresa = await _context.Empresas.Include(e => e.Frota).FirstOrDefaultAsync();
 
-            // Se não passarem ID na barra de endereço, vai buscar a primeira empresa da BD
-            if (id == null)
-            {
-                empresa = await _context.Empresas.FirstOrDefaultAsync();
-            }
-            else
-            {
-                empresa = await _context.Empresas.FirstOrDefaultAsync(e => e.Id == id);
-            }
-
+            // Se por acaso a BD estiver vazia, enviamos para o Create para criarem a primeira vez
             if (empresa == null)
             {
-                empresa = new Empresa();
-                _context.Empresas.Add(empresa);
+                return RedirectToAction(nameof(Create));
+            }
+
+            // 2. SEGREDO: Se a frota na Base de Dados estiver vazia, vamos enchê-la e GRAVAR
+            if (!empresa.Frota.Any())
+            {
+                // Criar os veículos de teste
+                var carro = new Carro
+                {
+                    Estado = EstadoVeiculo.Alugado,
+                    DataDisponibilidade = DateTime.Now.AddDays(1)
+                };
+                var mota = new Mota
+                {
+                    Estado = EstadoVeiculo.EmManutencao,
+                    DataDisponibilidade = DateTime.Now.AddDays(5)
+                };
+
+                // Adicionar à frota da empresa
+                empresa.Frota.Add(carro);
+                empresa.Frota.Add(mota);
+
+                // GRAVAR NA BASE DE DADOS REAL
+                _context.Update(empresa);
                 await _context.SaveChangesAsync();
             }
 
-            // O ASP.NET Core lida melhor com Arrays no TempData, por isso convertemos
             var alarmesGuardados = TempData["Alarmes"] as string[];
 
             var ViewModel = new EmpresaViewModel
@@ -185,12 +198,10 @@ namespace Projeto_AutoMobile.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AvancarDia(int id)
         {
-            var empresa = await _context.Empresas.FirstOrDefaultAsync(m =>m.Id == id);
+            // Pega na única empresa existente
+            var empresa = await _context.Empresas.Include(e => e.Frota).FirstOrDefaultAsync();
 
-            if (empresa == null)
-            {
-                return NotFound();
-            }
+            if (empresa == null) return NotFound();
 
             List<string> alarmes = empresa.AvancarDia();
 
@@ -198,13 +209,9 @@ namespace Projeto_AutoMobile.Controllers
             await _context.SaveChangesAsync();
 
             if (alarmes != null && alarmes.Count > 0)
-            {
                 TempData["Alarmes"] = alarmes.ToArray();
-            }
             else
-            {
-                TempData["Alarmes"] = "Avançou um dia no sistema. Sem alarmes a registar.";
-            }
+                TempData["Mensagem"] = "Dia avançado com sucesso.";
 
             return RedirectToAction(nameof(Index));
         }
