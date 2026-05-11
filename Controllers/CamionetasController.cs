@@ -101,7 +101,7 @@ namespace Projeto_AutoMobile.Controllers
         public async Task<IActionResult> Edit(int id, CamionetaViewModel viewModel)
         {
             if ((viewModel.Estado == EstadoVeiculo.Alugado || viewModel.Estado == EstadoVeiculo.EmManutencao)
-                && viewModel.DataDisponibilidade == null || viewModel.DataDisponibilidade <= DateTime.Now)
+                && (viewModel.DataDisponibilidade == null || viewModel.DataDisponibilidade <= DateTime.Now))
             {
                 ModelState.AddModelError("DataDisponibilidade", "A data é obrigatória se o estado for Alugado ou Em Manutenção.");
             }
