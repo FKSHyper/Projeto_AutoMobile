@@ -1,41 +1,54 @@
 ﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Cliente>
 
 @{
+    Layout = "_BaseIndex";
     ViewData["Title"] = "Clientes";
+    ViewData["DetalhesTitulo"] = "Informações Detalhadas";
+    ViewData["ListaTitulo"] = "Lista de Clientes";
+
+    var selectedId = ViewBag.SelectedId as int?;
+    var selectedCliente = Model.FirstOrDefault(c => c.Id == selectedId);
 }
 
-<h1>Clientes</h1>
+@section Detalhes {
+    @if (selectedCliente != null)
+    { 
+        <ul class="details-list">
+            <li><strong>Nome:</strong> @selectedCliente.Nome</li>
+            <li><strong>NIF:</strong> @selectedCliente.NIF</li>
+            <li><strong>Email:</strong> @selectedCliente.Email</li>
+            <li><strong>Telemóvel:</strong> @selectedCliente.Telemovel</li>
+            <li><strong>Carta:</strong> @selectedCliente.CartaConducao</li>
+        </ul>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <p>Selecione um cliente na lista ao lado para ver os detalhes.</p>
+        </div>
+    }
+}
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Novo Cliente</a>
-</p>
-
-<table class="table">
+<table class="table table-hover custom-table mb-0">
     <thead>
         <tr>
             <th>Nome</th>
             <th>NIF</th>
-            <th>Carta de Condução</th>
-            <th>Email</th>
-            <th>Telemóvel</th>
-            <th></th>
+            <th class="text-end">Ações</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model)
-{
-        <tr>
-            <td>@item.Nome</td>
-            <td>@item.NIF</td>
-            <td>@item.CartaConducao</td>
-            <td>@item.Email</td>
-            <td>@item.Telemovel</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            string activeClass = (item.Id == selectedId) ? "table-selected" : "";
+
+            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Clientes", new { id = item.Id })'">
+                <td>@item.Nome</td>
+                <td>@item.NIF</td>
+                <td class="text-end action-cell" onclick="event.stopPropagation();">
+                    <partial name="_TabelaAcoes" model="item.Id" />
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -17,26 +17,14 @@ namespace Projeto_AutoMobile.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            var listaClientes = _context.Clientes;
-            return View(await listaClientes.ToListAsync());
-        }
-
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (cliente == null) return NotFound();
-
+            var list = await _context.Clientes.ToListAsync();
             ViewBag.SelectedId = id;
-
-            return View(cliente);
+            return View(list);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -62,10 +50,10 @@ namespace Projeto_AutoMobile.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -73,8 +61,6 @@ namespace Projeto_AutoMobile.Controllers
             var cliente = await _context.Clientes.FindAsync(id);
 
             if (cliente == null) return NotFound();
-
-            ViewBag.SelectedId = id;
 
             var viewModel = new ClienteViewModel
             {
@@ -84,7 +70,7 @@ namespace Projeto_AutoMobile.Controllers
                 Email = cliente.Email,
                 Telemovel = cliente.Telemovel
             };
-
+            ViewBag.SelectedId = id;
             return View(viewModel);
         }
 
@@ -114,7 +100,7 @@ namespace Projeto_AutoMobile.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Clientes.Any(e => e.Id == id))
+                    if (!ClienteExists(id))
                         return NotFound();
 
                     throw;
@@ -123,38 +109,26 @@ namespace Projeto_AutoMobile.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.SelectedId = id;
             return View(model);
         }
 
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (cliente == null) return NotFound();
-
-            ViewBag.SelectedId = id;
-
-            return View(cliente);
-        }
-
-        [HttpPost, ActionName("Delete")]
+        // POST: Clientes/Delete/5
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
-
             if (cliente != null)
             {
                 _context.Clientes.Remove(cliente);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool ClienteExists(int id)
+        {
+            return _context.Clientes.Any(e => e.Id == id);
         }
     }
 }
