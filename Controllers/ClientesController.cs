@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
@@ -35,6 +34,7 @@ namespace Projeto_AutoMobile.Controllers
 
             var cliente = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (cliente == null)
             {
                 return NotFound();
@@ -50,18 +50,18 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // POST: Clientes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,NIF,CartaConducao,Email,Telemovel")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("Nome,NIF,CartaConducao,Email,Telemovel")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(cliente);
         }
 
@@ -74,21 +74,23 @@ namespace Projeto_AutoMobile.Controllers
             }
 
             var cliente = await _context.Clientes.FindAsync(id);
+
             if (cliente == null)
             {
                 return NotFound();
             }
+
             return View(cliente);
         }
 
         // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,NIF,CartaConducao,Email,Telemovel")] Cliente cliente)
+        public async Task<IActionResult> Edit(int id, [Bind("Nome,NIF,CartaConducao,Email,Telemovel")] Cliente cliente)
         {
-            if (id != cliente.Id)
+            var clienteBD = await _context.Clientes.FindAsync(id);
+
+            if (clienteBD == null)
             {
                 return NotFound();
             }
@@ -97,22 +99,27 @@ namespace Projeto_AutoMobile.Controllers
             {
                 try
                 {
-                    _context.Update(cliente);
+                    clienteBD.Nome = cliente.Nome;
+                    clienteBD.NIF = cliente.NIF;
+                    clienteBD.CartaConducao = cliente.CartaConducao;
+                    clienteBD.Email = cliente.Email;
+                    clienteBD.Telemovel = cliente.Telemovel;
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClienteExists(cliente.Id))
+                    if (!ClienteExists(id))
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(cliente);
         }
 
@@ -126,6 +133,7 @@ namespace Projeto_AutoMobile.Controllers
 
             var cliente = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (cliente == null)
             {
                 return NotFound();
@@ -140,12 +148,14 @@ namespace Projeto_AutoMobile.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
+
             if (cliente != null)
             {
                 _context.Clientes.Remove(cliente);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
