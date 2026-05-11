@@ -16,5 +16,7 @@ namespace Projeto_AutoMobile.ViewModels.Reserva
 
         [Required(ErrorMessage = "Selecione um veículo")]
         public int VeiculoId { get; set; }
+
+        public decimal PrecoEstimado { get; set; }
     }
 }
