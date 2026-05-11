@@ -1,83 +1,51 @@
 ﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Carro>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Carros";
+    Layout = "_BaseIndex";
+    ViewData["DetalhesTitulo"] = "Informações do Carro";
+    ViewData["ListaTitulo"] = "Frota de Veículos";
+    var selectedId = ViewBag.SelectedId as int?;
+    var selectedCarro = Model.FirstOrDefault(c => c.Id == selectedId);
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+@section Detalhes {
+    @if (selectedCarro != null)
+    {
+        <ul class="details-list">
+            <li><strong>Matricula:</strong> @selectedCarro.Matricula</li>
+            <li><strong>Estado:</strong> @selectedCarro.Estado</li>
+            <li><strong>Data Disponibilidade:</strong> @selectedCarro.DataDisponibilidade</li>
+            <li><strong>Preço:</strong> @selectedCarro.PrecoDia</li>
+            <li><strong>Marca:</strong> @selectedCarro.Marca</li>
+            <li><strong>Modelo:</strong> @selectedCarro.Modelo</li>
+            <li><strong>Caixa:</strong> @selectedCarro.Caixa</li>
+            <li><strong>Nº. Portas:</strong> @selectedCarro.NrPortas</li>
+        </ul>
+    }
+    else
+    {
+        <div class="text-center py-5 text-muted">Selecione um carro para detalhes.</div>
+    }
+}
+<table class="table table-hover custom-table mb-0">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NrPortas)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Caixa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Matricula)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Marca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Modelo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PrecoDia)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataDisponibilidade)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Empresa)
-            </th>
-            <th></th>
+            <th>Matrícula</th>
+            <th>Preço do Dia</th>
+            <th class="text-end">Ações</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NrPortas)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Caixa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Matricula)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Marca)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Modelo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrecoDia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataDisponibilidade)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Empresa.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr class="@(item.Id == selectedId ? "table-selected" : "") cursor-pointer"
+                onclick="location.href='@Url.Action("Index", new { id = item.Id })'">
+                <td>@item.Matricula</td>
+                <td>@item.PrecoDia</td>
+                <td class="text-end" onclick="event.stopPropagation();">
+                    <partial name="_TabelaAcoes" model="item.Id" />
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
