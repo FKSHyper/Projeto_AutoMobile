@@ -96,8 +96,20 @@ namespace Projeto_AutoMobile.Controllers
                 return NotFound();
             }
 
+            var viewModel = new Projeto_AutoMobile.ViewModels.Carro.CarroViewModel
+            {
+                Matricula = carro.Matricula,
+                Marca = carro.Marca,
+                Modelo = carro.Modelo,
+                PrecoDia = carro.PrecoDia,
+                NrPortas = carro.NrPortas,
+                Caixa = carro.Caixa,
+                Estado = carro.Estado,
+                DataDisponibilidade = carro.DataDisponibilidade,
+            };
+
             ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", carro.EmpresaId);
-            return View(carro);
+            return View(viewModel);
         }
 
         // POST: Carros/Edit/5
@@ -105,23 +117,31 @@ namespace Projeto_AutoMobile.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NrPortas,Caixa,Id,Matricula,Marca,Modelo,PrecoDia,Estado,DataDisponibilidade,EmpresaId")] Carro carro)
+        public async Task<IActionResult> Edit(int id, Projeto_AutoMobile.ViewModels.Carro.CarroViewModel viewModel)
         {
-            if (id != carro.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(carro);
+                    var editarCarro = await _context.Carros.FindAsync(id);
+                    if (editarCarro == null) return NotFound();
+
+                    editarCarro.Matricula = viewModel.Matricula;
+                    editarCarro.Marca = viewModel.Marca;
+                    editarCarro.Modelo = viewModel.Modelo;
+                    editarCarro.PrecoDia = viewModel.PrecoDia;
+                    editarCarro.NrPortas = viewModel.NrPortas;
+                    editarCarro.Caixa = viewModel.Caixa;
+                    editarCarro.Estado = viewModel.Estado;
+                    editarCarro.DataDisponibilidade = viewModel.DataDisponibilidade;
+                    editarCarro.EmpresaId = 1;
+
+                    _context.Update(editarCarro);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarroExists(carro.Id))
+                    if (!CarroExists(id))
                     {
                         return NotFound();
                     }
@@ -132,8 +152,7 @@ namespace Projeto_AutoMobile.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", carro.EmpresaId);
-            return View(carro);
+            return View(viewModel);
         }
 
         // GET: Carros/Delete/5
