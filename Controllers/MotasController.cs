@@ -117,6 +117,12 @@ namespace Projeto_AutoMobile.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Projeto_AutoMobile.ViewModels.Mota.MotaViewModel viewModel)
         {
+            if ((viewModel.Estado == EstadoVeiculo.Alugado || viewModel.Estado == EstadoVeiculo.EmManutencao)
+                && (viewModel.DataDisponibilidade == null || viewModel.DataDisponibilidade <= DateTime.Now))
+            {
+                ModelState.AddModelError("DataDisponibilidade", "A data é obrigatória se o estado for Alugado ou Em Manutenção.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
