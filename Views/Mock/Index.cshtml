@@ -79,3 +79,25 @@
 
     </div>
 </div>
+@if (Context.Request.Query.ContainsKey("idToDelete"))
+{
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+
+        <div class="card custom-card shadow-lg" style="max-width: 450px; width: 90%;">
+            <div class="card-body p-5 text-center">
+                <i class="bi bi-exclamation-octagon text-danger fs-1 mb-3 d-block"></i>
+                <h4 class="fw-bold mb-3">Confirmar Eliminação</h4>
+                <p class="text-muted mb-4">Tem a certeza que deseja eliminar este registo? Esta ação é irreversível.</p>
+
+                <form asp-action="DeleteConfirmed" method="post">
+                    <input type="hidden" name="id" value="@Context.Request.Query["idToDelete"]" />
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">Eliminar Agora</button>
+                        <a asp-action="Index" class="btn btn-theme-menu">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

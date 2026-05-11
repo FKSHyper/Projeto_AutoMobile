@@ -27,23 +27,23 @@ namespace Projeto_AutoMobile.Controllers
             return View(list);
         }
 
-        // GET: Clientes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: Clientes/Details/5
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
+        //    var cliente = await _context.Clientes
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (cliente == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(cliente);
-        }
+        //    return View(cliente);
+        //}
 
         // GET: Clientes/Create
         public IActionResult Create()
@@ -84,8 +84,6 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,NIF,CartaConducao,Email,Telemovel")] Cliente cliente)
@@ -118,26 +116,25 @@ namespace Projeto_AutoMobile.Controllers
             return View(cliente);
         }
 
-        // GET: Clientes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: Clientes/Delete/5
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
+        //    var cliente = await _context.Clientes
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (cliente == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(cliente);
-        }
+        //    return View(cliente);
+        //}
 
-        // POST: Clientes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -145,9 +142,9 @@ namespace Projeto_AutoMobile.Controllers
             if (cliente != null)
             {
                 _context.Clientes.Remove(cliente);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
+            // Volta para a mesma página, agora sem o parâmetro idToDelete na URL
             return RedirectToAction(nameof(Index));
         }
 
