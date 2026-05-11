@@ -94,8 +94,20 @@ namespace Projeto_AutoMobile.Controllers
             {
                 return NotFound();
             }
+
+            var viewModel = new Projeto_AutoMobile.ViewModels.Mota.MotaViewModel
+            {
+                Matricula = mota.Matricula,
+                Marca = mota.Marca,
+                Modelo = mota.Modelo,
+                PrecoDia = mota.PrecoDia,
+                Cilindrada = mota.Cilindrada,
+                Estado = mota.Estado,
+                DataDisponibilidade = mota.DataDisponibilidade
+            };
+
             ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", mota.EmpresaId);
-            return View(mota);
+            return View(viewModel);
         }
 
         // POST: Motas/Edit/5
@@ -103,23 +115,30 @@ namespace Projeto_AutoMobile.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Cilindrada,Id,Matricula,Marca,Modelo,PrecoDia,Estado,DataDisponibilidade,EmpresaId")] Mota mota)
+        public async Task<IActionResult> Edit(int id, Projeto_AutoMobile.ViewModels.Mota.MotaViewModel viewModel)
         {
-            if (id != mota.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(mota);
+                    var editarMota = await _context.Motas.FindAsync(id);
+                    if (editarMota == null) return NotFound();
+
+                    editarMota.Matricula = viewModel.Matricula;
+                    editarMota.Marca = viewModel.Marca;
+                    editarMota.Modelo = viewModel.Modelo;
+                    editarMota.PrecoDia = viewModel.PrecoDia;
+                    editarMota.Cilindrada = viewModel.Cilindrada;
+                    editarMota.Estado = viewModel.Estado;
+                    editarMota.DataDisponibilidade = viewModel.DataDisponibilidade;
+                    editarMota.EmpresaId = 1;
+
+                    _context.Update(editarMota);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MotaExists(mota.Id))
+                    if (!MotaExists(id))
                     {
                         return NotFound();
                     }
@@ -130,8 +149,7 @@ namespace Projeto_AutoMobile.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", mota.EmpresaId);
-            return View(mota);
+            return View(viewModel);
         }
 
         // GET: Motas/Delete/5
