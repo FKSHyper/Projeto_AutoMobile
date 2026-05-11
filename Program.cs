@@ -14,6 +14,9 @@ namespace Projeto_AutoMobile
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+            //Teste if connection string is null
+            //if (string.IsNullOrEmpty(connectionString)) { throw new Exception("The baton was dropped! Connection string is null."); }
+
             builder.Services.AddDbContext<Projeto_AutoMobileContext>(options =>
                 options.UseSqlServer(connectionString));
 
