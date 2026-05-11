@@ -82,6 +82,11 @@ namespace Projeto_AutoMobile.Migrations
                     b.Property<DateTime?>("DataDisponibilidade")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<int>("EmpresaId")
                         .HasColumnType("int");
 
@@ -104,18 +109,13 @@ namespace Projeto_AutoMobile.Migrations
                         .HasPrecision(8, 2)
                         .HasColumnType("decimal(8,2)");
 
-                    b.Property<string>("TipoVeiculo")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EmpresaId");
 
                     b.ToTable("Veiculos");
 
-                    b.HasDiscriminator<string>("TipoVeiculo").HasValue("Veiculo");
+                    b.HasDiscriminator().HasValue("Veiculo");
 
                     b.UseTphMappingStrategy();
                 });

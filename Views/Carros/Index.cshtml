@@ -1,48 +1,53 @@
 ﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Carro>
 
 @{
-    ViewData["Title"] = "Carros";
     Layout = "_BaseIndex";
-    ViewData["DetalhesTitulo"] = "Informações do Carro";
-    ViewData["ListaTitulo"] = "Frota de Veículos";
+    ViewData["Title"] = "Carros";
+    ViewData["DetalhesTitulo"] = "Informações Detalhadas";
+    ViewData["ListaTitulo"] = "Lista de Carros";
+
     var selectedId = ViewBag.SelectedId as int?;
     var selectedCarro = Model.FirstOrDefault(c => c.Id == selectedId);
 }
+
 @section Detalhes {
     @if (selectedCarro != null)
     {
         <ul class="details-list">
-            <li><strong>Matricula:</strong> @selectedCarro.Matricula</li>
-            <li><strong>Estado:</strong> @selectedCarro.Estado</li>
-            <li><strong>Data Disponibilidade:</strong> @selectedCarro.DataDisponibilidade</li>
-            <li><strong>Preço:</strong> @selectedCarro.PrecoDia</li>
-            <li><strong>Marca:</strong> @selectedCarro.Marca</li>
-            <li><strong>Modelo:</strong> @selectedCarro.Modelo</li>
-            <li><strong>Caixa:</strong> @selectedCarro.Caixa</li>
-            <li><strong>Nº. Portas:</strong> @selectedCarro.NrPortas</li>
+            <li><strong>Matrícula:</strong>@selectedCarro.Matricula</li>
+            <li><strong>Estado:</strong>@selectedCarro.Estado</li>
+            <li><strong>Preço/Dia:</strong>@selectedCarro.PrecoDia.ToString("C")</li>
+            <li><strong>Caixa:</strong>@selectedCarro.Caixa</li>
+            <li><strong>Portas:</strong> @selectedCarro.NrPortas</li>
+            <li><strong>Disponibilidade:</strong>@selectedCarro.DataDisponibilidade</li>
         </ul>
     }
     else
     {
-        <div class="text-center py-5 text-muted">Selecione um carro para detalhes.</div>
+        <div class="text-center py-5">
+            <p>Selecione um carro da lista para ver os detalhes completos.</p>
+        </div>
     }
 }
 <table class="table table-hover custom-table mb-0">
     <thead>
         <tr>
             <th>Matrícula</th>
-            <th>Preço do Dia</th>
+            <th>Marca / Modelo</th>
+            <th>Preço/Dia</th>
             <th class="text-end">Ações</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr class="@(item.Id == selectedId ? "table-selected" : "") cursor-pointer"
-                onclick="location.href='@Url.Action("Index", new { id = item.Id })'">
+            string activeClass = (item.Id == selectedId) ? "table-selected" : "";
+
+            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Carros", new { id = item.Id })'">
                 <td>@item.Matricula</td>
-                <td>@item.PrecoDia</td>
-                <td class="text-end" onclick="event.stopPropagation();">
+                <td>@item.Marca @item.Modelo</td>
+                <td>@item.PrecoDia.ToString("C")</td>
+                <td class="text-end action-cell" onclick="event.stopPropagation();">
                     <partial name="_TabelaAcoes" model="item.Id" />
                 </td>
             </tr>

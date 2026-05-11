@@ -1,103 +1,54 @@
 ﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Cliente>
 
 @{
+    Layout = "_BaseIndex";
+    ViewData["Title"] = "Clientes";
+    ViewData["DetalhesTitulo"] = "Informações Detalhadas";
+    ViewData["ListaTitulo"] = "Lista de Clientes";
+
     var selectedId = ViewBag.SelectedId as int?;
     var selectedCliente = Model.FirstOrDefault(c => c.Id == selectedId);
-    ViewData["Title"] = "Clientes";
 }
 
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/Projeto_AutoMobile.styles.css" asp-append-version="true" />
-<link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
-<div class="container-fluid custom-container">
-    <div class="row">
-
-        <div class="col-md-4">
-            <div class="card shadow-sm custom-card">
-                <div class="card-header">
-                    <h5 class="mb-0">Informações Detalhadas</h5>
-                </div>
-                <div class="card-body p-0" style="min-height: 300px;">
-                    @if (selectedCliente != null)
-                    {
-                        <ul class="details-list">
-                            <li><strong>Nome:</strong> @selectedCliente.Nome</li>
-                            <li><strong>NIF:</strong> @selectedCliente.NIF</li>
-                            <li><strong>Email:</strong> @selectedCliente.Email</li>
-                            <li><strong>Telemóvel:</strong> @selectedCliente.Telemovel</li>
-                            <li><strong>Carta:</strong> @selectedCliente.CartaConducao</li>
-                        </ul>
-                    }
-                    else
-                    {
-                        <div class="text-center py-5">
-                            <p>Selecione um cliente na lista ao lado para ver os detalhes.</p>
-                        </div>
-                    }
-                </div>
-                <div class="card-footer">
-                </div>
-            </div>
+@section Detalhes {
+    @if (selectedCliente != null)
+    { 
+        <ul class="details-list">
+            <li><strong>Nome:</strong> @selectedCliente.Nome</li>
+            <li><strong>NIF:</strong> @selectedCliente.NIF</li>
+            <li><strong>Email:</strong> @selectedCliente.Email</li>
+            <li><strong>Telemóvel:</strong> @selectedCliente.Telemovel</li>
+            <li><strong>Carta:</strong> @selectedCliente.CartaConducao</li>
+        </ul>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <p>Selecione um cliente na lista ao lado para ver os detalhes.</p>
         </div>
-
-        <div class="col-md-8">
-            <div class="card shadow-sm custom-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Lista de Clientes</h5>
-                    <a asp-action="Create" class="btn btn-sm btn-primary">Novo Cliente</a>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover custom-table mb-0">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>NIF</th>
-                                <th class="text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                string activeClass = (item.Id == selectedId) ? "table-selected" : "";
-
-                                <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Mock", new { id = item.Id })'">
-                                    <td>@item.Nome</td>
-                                    <td>@item.NIF</td>
-                                    <td class="text-end action-cell" onclick="event.stopPropagation();">
-                                        <partial name="_TabelaAcoes" model="item.Id" />
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                    <div class="card-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-@if (Context.Request.Query.ContainsKey("idToDelete"))
-{
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-
-        <div class="card custom-card shadow-lg" style="max-width: 450px; width: 90%;">
-            <div class="card-body p-5 text-center">
-                <i class="bi bi-exclamation-octagon text-danger fs-1 mb-3 d-block"></i>
-                <h4 class="fw-bold mb-3">Confirmar Eliminação</h4>
-                <p class="text-muted mb-4">Tem a certeza que deseja eliminar este registo? Esta ação é irreversível.</p>
-
-                <form asp-action="DeleteConfirmed" method="post">
-                    <input type="hidden" name="id" value="@Context.Request.Query["idToDelete"]" />
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-danger btn-lg">Eliminar Agora</button>
-                        <a asp-action="Index" class="btn btn-theme-menu">Cancelar</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    }
 }
+
+<table class="table table-hover custom-table mb-0">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>NIF</th>
+            <th class="text-end">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            string activeClass = (item.Id == selectedId) ? "table-selected" : "";
+
+            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Clientes", new { id = item.Id })'">
+                <td>@item.Nome</td>
+                <td>@item.NIF</td>
+                <td class="text-end action-cell" onclick="event.stopPropagation();">
+                    <partial name="_TabelaAcoes" model="item.Id" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

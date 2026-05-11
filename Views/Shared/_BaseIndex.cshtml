@@ -1,46 +1,54 @@
 ﻿@{
     Layout = "_Layout";
 }
-
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Projeto_AutoMobile.styles.css" asp-append-version="true" />
+<link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
 <div class="container-fluid custom-container">
     <div class="row">
         <div class="col-md-4">
-            <div class="card shadow-sm custom-card h-100">
+            <div class="card shadow-sm custom-card">
                 <div class="card-header">
                     <h5 class="mb-0">@ViewData["DetalhesTitulo"]</h5>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" style="min-height: 300px;">
                     @RenderSection("Detalhes", required: true)
                 </div>
-                <div class="card-footer"></div>
+                <div class="card-footer">
+                </div>
             </div>
         </div>
-
         <div class="col-md-8">
-            <div class="card shadow-sm custom-card h-100">
+            <div class="card shadow-sm custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">@ViewData["ListaTitulo"]</h5>
                     <a asp-action="Create" class="btn btn-sm btn-primary">Novo Registo</a>
                 </div>
                 <div class="card-body p-0">
                     @RenderBody()
+                    <div class="card-footer">
+                    </div>
                 </div>
-                <div class="card-footer"></div>
             </div>
         </div>
     </div>
 </div>
 
+
 @if (Context.Request.Query.ContainsKey("idToDelete"))
 {
-    <div class="delete-overlay">
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+
         <div class="card custom-card shadow-lg" style="max-width: 450px; width: 90%;">
             <div class="card-body p-5 text-center">
                 <i class="bi bi-exclamation-octagon text-danger fs-1 mb-3 d-block"></i>
                 <h4 class="fw-bold mb-3">Confirmar Eliminação</h4>
-                <p class="text-muted mb-4">Tem a certeza? Esta ação é irreversível.</p>
+                <p class="text-muted mb-4">Tem a certeza que deseja eliminar este registo? Esta ação é irreversível.</p>
+
                 <form asp-action="DeleteConfirmed" method="post">
                     <input type="hidden" name="id" value="@Context.Request.Query["idToDelete"]" />
+
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-danger btn-lg">Eliminar Agora</button>
                         <a asp-action="Index" class="btn btn-theme-menu">Cancelar</a>

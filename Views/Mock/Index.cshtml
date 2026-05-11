@@ -3,7 +3,7 @@
 @{
     var selectedId = ViewBag.SelectedId as int?;
     var selectedCliente = Model.FirstOrDefault(c => c.Id == selectedId);
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Clientes";
 }
 
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
 <div class="container-fluid custom-container">
     <div class="row">
-
         <div class="col-md-4">
             <div class="card shadow-sm custom-card">
                 <div class="card-header">

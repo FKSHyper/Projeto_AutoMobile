@@ -1,89 +1,83 @@
 ﻿@model Projeto_AutoMobile.Data.Projeto_AutoMobile.Cliente
 
 @{
-    ViewData["Title"] = "Novo Cliente";
+    Layout = "_BaseInsert";
+    ViewData["Title"] = "Registar Novo Cliente";
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<div class="custom-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Registar Novo Cliente</h2>
-        <a asp-action="Index" class="btn btn-theme-menu d-flex align-items-center gap-2">
-            <i class="bi bi-arrow-left"></i> <span>Voltar à Lista</span>
-        </a>
-    </div>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <form asp-action="Create">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        <div class="row">
-            <div class="col-lg-7 mb-4">
-                <div class="card custom-card h-100">
-                    <div class="card-header">
-                        <i class="bi bi-person-badge me-2"></i> Informação Pessoal
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="mb-3">
-                            <label asp-for="Nome" class="form-label fw-bold"></label>
-                            <div class="input-group">
-                                <span class="input-group-text border-end-0"><i class="bi bi-person"></i></span>
-                                <input asp-for="Nome" class="form-control border-start-0" placeholder="Nome completo" />
-                            </div>
-                            <span asp-validation-for="Nome" class="text-danger small"></span>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="NIF" class="form-label fw-bold"></label>
-                                <input asp-for="NIF" class="form-control" placeholder="123456789" />
-                                <span asp-validation-for="NIF" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CartaConducao" class="form-label fw-bold">Nº Carta Condução</label>
-                                <input asp-for="CartaConducao" class="form-control" placeholder="P-123456" />
-                                <span asp-validation-for="CartaConducao" class="text-danger small"></span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="card custom-card h-100">
+                <div class="card-header">
+                    <i class="bi bi-person-badge me-2"></i> Informação Pessoal
                 </div>
-            </div>
-
-            <div class="col-lg-5 mb-4">
-                <div class="card custom-card h-100">
-                    <div class="card-header">
-                        <i class="bi bi-envelope-at me-2"></i> Contactos de Emergência
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="Nome" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-person"></i></span>
+                            <input asp-for="Nome" class="form-control border-start-0" placeholder="Nome completo" />
+                        </div>
+                        <span asp-validation-for="Nome" class="text-danger small"></span>
                     </div>
-                    <div class="card-body p-4">
-                        <div class="mb-4">
-                            <label asp-for="Email" class="form-label fw-bold"></label>
-                            <div class="input-group">
-                                <span class="input-group-text border-end-0"><i class="bi bi-mailbox"></i></span>
-                                <input asp-for="Email" class="form-control border-start-0" placeholder="exemplo@email.com" />
-                            </div>
-                            <span asp-validation-for="Email" class="text-danger small"></span>
-                        </div>
 
-                        <div class="mb-4">
-                            <label asp-for="Telemovel" class="form-label fw-bold"></label>
-                            <div class="input-group">
-                                <span class="input-group-text border-end-0"><i class="bi bi-phone"></i></span>
-                                <input asp-for="Telemovel" class="form-control border-start-0" placeholder="912 345 678" />
-                            </div>
-                            <span asp-validation-for="Telemovel" class="text-danger small"></span>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NIF" class="form-label fw-bold"></label>
+                            <input asp-for="NIF" class="form-control" placeholder="123456789" />
+                            <span asp-validation-for="NIF" class="text-danger small"></span>
                         </div>
-                        
-                        <div class="d-grid gap-2 pt-2">
-                            <button type="submit" class="btn btn-primary btn-lg shadow-sm">
-                                <i class="bi bi-check-circle me-2"></i> Criar Cliente
-                            </button>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CartaConducao" class="form-label fw-bold">Nº Carta Condução</label>
+                            <input asp-for="CartaConducao" class="form-control" placeholder="P-123456" />
+                            <span asp-validation-for="CartaConducao" class="text-danger small"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
-</div>
+
+        <div class="col-lg-5 mb-4">
+            <div class="card custom-card h-100">
+                <div class="card-header">
+                    <i class="bi bi-envelope-at me-2"></i> Contactos
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <label asp-for="Email" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-mailbox"></i></span>
+                            <input asp-for="Email" class="form-control border-start-0" placeholder="exemplo@email.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Telemovel" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-phone"></i></span>
+                            <input asp-for="Telemovel" class="form-control border-start-0" placeholder="912 345 678" />
+                        </div>
+                        <span asp-validation-for="Telemovel" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 pt-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="bi bi-check-circle me-2"></i> Criar Cliente
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

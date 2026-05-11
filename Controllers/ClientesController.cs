@@ -20,6 +20,7 @@ namespace Projeto_AutoMobile.Controllers
         public async Task<IActionResult> Index(int? id)
         {
             var list = await _context.Clientes.ToListAsync();
+            ViewBag.SelectedId = id;
             return View(list);
         }
 
