@@ -26,7 +26,7 @@ namespace Projeto_AutoMobile.ViewModels.Camiao
 
         [Required(ErrorMessage = "A capacidade de carga é obrigatória.")]
         [Display(Name = "Capacidade de Carga (Kg)")]
-        public int CapacidadeCarga { get; set; }
+        public int MaxCarga { get; set; }
 
         public DateTime? DataDisponibilidade { get; set; }
 

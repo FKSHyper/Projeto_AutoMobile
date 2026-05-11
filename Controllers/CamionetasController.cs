@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
+using Projeto_AutoMobile.ViewModels.Camioneta;
+
 
 namespace Projeto_AutoMobile.Controllers
 {
@@ -29,18 +27,12 @@ namespace Projeto_AutoMobile.Controllers
         // GET: Camionetas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var camioneta = await _context.Camionetas
                 .Include(c => c.Empresa)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (camioneta == null)
-            {
-                return NotFound();
-            }
+            if (camioneta == null) return NotFound();
 
             return View(camioneta);
         }
@@ -53,90 +45,100 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // POST: Camionetas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaxPassageiros,Eixos,Id,Matricula,Marca,Modelo,PrecoDia,Estado,DataDisponibilidade,EmpresaId")] Camioneta camioneta)
+        public async Task<IActionResult> Create(CamionetaViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var camioneta = new Camioneta
+                {
+                    Matricula = viewModel.Matricula,
+                    Marca = viewModel.Marca,
+                    Modelo = viewModel.Modelo,
+                    PrecoDia = viewModel.PrecoDia,
+                    MaxPassageiros = viewModel.MaxPassageiros,
+                    Eixos = viewModel.Eixos,
+                    Estado = EstadoVeiculo.Disponivel,
+                    DataDisponibilidade = DateTime.Now,
+                    EmpresaId = 1
+                };
+
                 _context.Add(camioneta);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", camioneta.EmpresaId);
-            return View(camioneta);
+            return View(viewModel);
         }
 
         // GET: Camionetas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var camioneta = await _context.Camionetas.FindAsync(id);
-            if (camioneta == null)
+            if (camioneta == null) return NotFound();
+
+            var viewModel = new CamionetaViewModel
             {
-                return NotFound();
-            }
+                Matricula = camioneta.Matricula,
+                Marca = camioneta.Marca,
+                Modelo = camioneta.Modelo,
+                PrecoDia = camioneta.PrecoDia,
+                MaxPassageiros = camioneta.MaxPassageiros, // Mapeamento direto
+                Eixos = camioneta.Eixos, // Mapeamento direto
+                Estado = camioneta.Estado,
+                DataDisponibilidade = camioneta.DataDisponibilidade
+            };
+
             ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", camioneta.EmpresaId);
-            return View(camioneta);
+            return View(viewModel);
         }
 
         // POST: Camionetas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaxPassageiros,Eixos,Id,Matricula,Marca,Modelo,PrecoDia,Estado,DataDisponibilidade,EmpresaId")] Camioneta camioneta)
+        public async Task<IActionResult> Edit(int id, CamionetaViewModel viewModel)
         {
-            if (id != camioneta.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(camioneta);
+                    var camionetaOriginal = await _context.Camionetas.FindAsync(id);
+                    if (camionetaOriginal == null) return NotFound();
+
+                    camionetaOriginal.Matricula = viewModel.Matricula;
+                    camionetaOriginal.Marca = viewModel.Marca;
+                    camionetaOriginal.Modelo = viewModel.Modelo;
+                    camionetaOriginal.PrecoDia = viewModel.PrecoDia;
+                    camionetaOriginal.MaxPassageiros = viewModel.MaxPassageiros;
+                    camionetaOriginal.Eixos = viewModel.Eixos;
+                    camionetaOriginal.Estado = viewModel.Estado;
+                    camionetaOriginal.DataDisponibilidade = viewModel.DataDisponibilidade;
+
+                    _context.Update(camionetaOriginal);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CamionetaExists(camioneta.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CamionetaExists(id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", camioneta.EmpresaId);
-            return View(camioneta);
+            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id");
+            return View(viewModel);
         }
 
         // GET: Camionetas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var camioneta = await _context.Camionetas
                 .Include(c => c.Empresa)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (camioneta == null)
-            {
-                return NotFound();
-            }
+            if (camioneta == null) return NotFound();
 
             return View(camioneta);
         }
@@ -151,7 +153,6 @@ namespace Projeto_AutoMobile.Controllers
             {
                 _context.Camionetas.Remove(camioneta);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

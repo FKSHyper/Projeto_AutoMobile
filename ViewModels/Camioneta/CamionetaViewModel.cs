@@ -24,14 +24,14 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
         [Required(ErrorMessage = "O número de eixos é obrigatório.")]
         [Range(2, 3, ErrorMessage = "O número de eixos de uma camioneta tem de ser 2 ou 3.")]
         [Display(Name = "Número de Eixos")]
-        public int NumeroEixos { get; set; }
+        public int Eixos { get; set; }
 
         [Required(ErrorMessage = "O estado é obrigatório.")]
         public EstadoVeiculo Estado { get; set; }
 
         [Required(ErrorMessage = "O número máximo de passageiros é obrigatório.")]
         [Display(Name = "Máximo de Passageiros")]
-        public int NumeroMaximoPassageiros { get; set; }
+        public int MaxPassageiros { get; set; }
 
         public DateTime? DataDisponibilidade { get; set; }
     }

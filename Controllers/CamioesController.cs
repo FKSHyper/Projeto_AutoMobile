@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
+using Projeto_AutoMobile.ViewModels.Camiao;
 
 namespace Projeto_AutoMobile.Controllers
 {
@@ -29,18 +26,12 @@ namespace Projeto_AutoMobile.Controllers
         // GET: Camioes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var camiao = await _context.Camioes
                 .Include(c => c.Empresa)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (camiao == null)
-            {
-                return NotFound();
-            }
+            if (camiao == null) return NotFound();
 
             return View(camiao);
         }
@@ -53,90 +44,98 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // POST: Camioes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaxCarga,Id,Matricula,Marca,Modelo,PrecoDia,Estado,DataDisponibilidade,EmpresaId")] Camiao camiao)
+        public async Task<IActionResult> Create(CamiaoViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var camiao = new Camiao
+                {
+                    Matricula = viewModel.Matricula,
+                    Marca = viewModel.Marca,
+                    Modelo = viewModel.Modelo,
+                    PrecoDia = viewModel.PrecoDia,
+                    // Mapeamento direto com o novo nome
+                    MaxCarga = viewModel.MaxCarga,
+                    Estado = EstadoVeiculo.Disponivel,
+                    DataDisponibilidade = DateTime.Now,
+                    EmpresaId = 1
+                };
+
                 _context.Add(camiao);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", camiao.EmpresaId);
-            return View(camiao);
+            return View(viewModel);
         }
 
         // GET: Camioes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var camiao = await _context.Camioes.FindAsync(id);
-            if (camiao == null)
+            if (camiao == null) return NotFound();
+
+            var viewModel = new CamiaoViewModel
             {
-                return NotFound();
-            }
+                Matricula = camiao.Matricula,
+                Marca = camiao.Marca,
+                Modelo = camiao.Modelo,
+                PrecoDia = camiao.PrecoDia,
+                MaxCarga = camiao.MaxCarga, // Mapeamento direto
+                Estado = camiao.Estado,
+                DataDisponibilidade = camiao.DataDisponibilidade
+            };
+
             ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", camiao.EmpresaId);
-            return View(camiao);
+            return View(viewModel);
         }
 
         // POST: Camioes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaxCarga,Id,Matricula,Marca,Modelo,PrecoDia,Estado,DataDisponibilidade,EmpresaId")] Camiao camiao)
+        public async Task<IActionResult> Edit(int id, CamiaoViewModel viewModel)
         {
-            if (id != camiao.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(camiao);
+                    var camiaoOriginal = await _context.Camioes.FindAsync(id);
+                    if (camiaoOriginal == null) return NotFound();
+
+                    camiaoOriginal.Matricula = viewModel.Matricula;
+                    camiaoOriginal.Marca = viewModel.Marca;
+                    camiaoOriginal.Modelo = viewModel.Modelo;
+                    camiaoOriginal.PrecoDia = viewModel.PrecoDia;
+                    camiaoOriginal.MaxCarga = viewModel.MaxCarga; // Mapeamento direto
+                    camiaoOriginal.Estado = viewModel.Estado;
+                    camiaoOriginal.DataDisponibilidade = viewModel.DataDisponibilidade;
+
+                    _context.Update(camiaoOriginal);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CamiaoExists(camiao.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CamiaoExists(id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", camiao.EmpresaId);
-            return View(camiao);
+            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id");
+            return View(viewModel);
         }
 
         // GET: Camioes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var camiao = await _context.Camioes
                 .Include(c => c.Empresa)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (camiao == null)
-            {
-                return NotFound();
-            }
+            if (camiao == null) return NotFound();
 
             return View(camiao);
         }
@@ -151,7 +150,6 @@ namespace Projeto_AutoMobile.Controllers
             {
                 _context.Camioes.Remove(camiao);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
