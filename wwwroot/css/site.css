@@ -43,6 +43,11 @@ a {
     color: var(--primary-action);
 }
 
+.table {
+    color: var(--text-main);
+    border-color: var(--text-main);
+}
+
 .border-top, .border-bottom {
     border-color: var(--border-color) !important;
 }
@@ -99,10 +104,13 @@ footer {
     color: var(--text-main);
 }
 
+.card-header {
+    background-color: var(--bg-sidebar);
+}
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {

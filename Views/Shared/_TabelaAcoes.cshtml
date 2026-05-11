@@ -1,12 +1,16 @@
 ﻿@model dynamic
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Projeto_AutoMobile.styles.css" asp-append-version="true" />
+<link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
 <div class="btn-group btn-group-sm" role="group">
     <a asp-action="Edit" asp-route-id="@Model" class="btn btn-outline-primary" title="Edit">
-        <i class="bi bi-pencil"></i>
+        <i class="bi bi-pencil">a</i>
     </a>
     <a asp-action="Details" asp-route-id="@Model" class="btn btn-outline-info" title="Details">
-        <i class="bi bi-eye"></i>
+        <i class="bi bi-eye">b</i>
     </a>
     <a asp-action="Delete" asp-route-id="@Model" class="btn btn-outline-danger" title="Delete">
-        <i class="bi bi-trash"></i>
+        <i class="bi bi-trash">c</i>
     </a>
 </div>

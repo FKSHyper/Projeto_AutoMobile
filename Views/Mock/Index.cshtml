@@ -1,57 +1,82 @@
 ﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Cliente>
 
 @{
+    var selectedId = ViewBag.SelectedId as int?;
+    var selectedCliente = Model.FirstOrDefault(c => c.Id == selectedId);
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Projeto_AutoMobile.styles.css" asp-append-version="true" />
+<link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Informações Detalhadas</h5>
+                </div>
+                <div class="card-body" style="min-height: 300px;">
+                    @if (selectedCliente != null)
+                    {
+                        <ul class="list-group list-group-flush bg-transparent">
+                            <li class="list-group-item bg-transparent"><strong>Nome:</strong> @selectedCliente.Nome</li>
+                            <li class="list-group-item bg-transparent"><strong>NIF:</strong> @selectedCliente.NIF</li>
+                            <li class="list-group-item bg-transparent"><strong>Email:</strong> @selectedCliente.Email</li>
+                            <li class="list-group-item bg-transparent"><strong>Telemóvel:</strong> @selectedCliente.Telemovel</li>
+                            <li class="list-group-item bg-transparent"><strong>Carta:</strong> @selectedCliente.CartaConducao</li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-arrow-right-circle d-block mb-2" style="font-size: 2rem;"></i>
+                            <p>Selecione um cliente na lista ao lado para ver os detalhes.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NIF)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CartaConducao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telemovel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NIF)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CartaConducao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telemovel)
-            </td>
-                <td class="text-nowrap text-end">
-                    <partial name="_TabelaAcoes" model="item.Id" />
-                </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header d-flex justify-content-between">
+                    <h5 class="mb-0">Lista de Clientes</h5>
+                    <a asp-action="Create" class="btn btn-sm btn-primary">Novo Cliente</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nome</th>
+                                <th>NIF</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                // Highlight the row if it's the one selected
+                                string activeClass = (item.Id == selectedId) ? "table-primary" : "";
+
+                                <tr class="@activeClass">
+                                    <td>
+                                        <a asp-action="Index" asp-route-id="@item.Id" class="text-decoration-none fw-bold">
+                                            @item.Nome
+                                        </a>
+                                    </td>
+                                    <td>@item.NIF</td>
+                                    <td class="text-end">
+                                        <partial name="_TabelaAcoes" model="item.Id" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
