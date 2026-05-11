@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
-using Projeto_AutoMobile.ViewModels.Clientes;
+using Projeto_AutoMobile.ViewModels.Cliente;
 
 namespace Projeto_AutoMobile.Controllers
 {

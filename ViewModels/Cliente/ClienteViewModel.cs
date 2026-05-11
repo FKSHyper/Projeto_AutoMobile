@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Projeto_AutoMobile.ViewModels.Clientes
+namespace Projeto_AutoMobile.ViewModels.Cliente
 {
     public class ClienteViewModel
     {
