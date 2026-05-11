@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
+using Projeto_AutoMobile.ViewModels.Empresa;
 
 namespace Projeto_AutoMobile.Controllers
 {
@@ -20,9 +21,39 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Empresas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            return View(await _context.Empresas.ToListAsync());
+            Empresa empresa;
+
+            // Se não passarem ID na barra de endereço, vai buscar a primeira empresa da BD
+            if (id == null)
+            {
+                empresa = await _context.Empresas.FirstOrDefaultAsync();
+            }
+            else
+            {
+                empresa = await _context.Empresas.FirstOrDefaultAsync(e => e.Id == id);
+            }
+
+            if (empresa == null)
+            {
+                empresa = new Empresa();
+                _context.Empresas.Add(empresa);
+                await _context.SaveChangesAsync();
+            }
+
+            // O ASP.NET Core lida melhor com Arrays no TempData, por isso convertemos
+            var alarmesGuardados = TempData["Alarmes"] as string[];
+
+            var ViewModel = new EmpresaViewModel
+            {
+                EmpresaId = empresa.Id,
+                DataAtual = empresa.DataAtual,
+                Frota = empresa.ObterVeiculos(),
+                Alarmes = alarmesGuardados != null ? alarmesGuardados.ToList() : new List<string>()
+            };
+
+            return View(ViewModel);
         }
 
         // GET: Empresas/Details/5
@@ -168,7 +199,7 @@ namespace Projeto_AutoMobile.Controllers
 
             if (alarmes != null && alarmes.Count > 0)
             {
-                TempData["Alarmes"] = string.Join(", ", alarmes);
+                TempData["Alarmes"] = alarmes.ToArray();
             }
             else
             {
