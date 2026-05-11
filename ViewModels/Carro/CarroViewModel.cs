@@ -30,7 +30,6 @@ namespace Projeto_AutoMobile.ViewModels.Carro
         [Required(ErrorMessage = "Selecione o tipo de caixa.")]
         [Display(Name = "Tipo de Caixa")]
         public TipoCaixa Caixa { get; set; }
-
         public DateTime? DataDisponibilidade { get; set; }
     }
 }
