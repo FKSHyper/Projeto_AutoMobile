@@ -362,3 +362,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Migrations
+/Migrations
+/Migrations
+/Migrations
+Migrations/Projeto_AutoMobileContextModelSnapshot.cs
+Migrations/20260510164117_Initial.Designer.cs
+Migrations/20260510164117_Initial.cs

@@ -10,44 +10,46 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/Projeto_AutoMobile.styles.css" asp-append-version="true" />
 <link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
-<div class="container-fluid mt-4">
+<div class="container-fluid custom-container">
     <div class="row">
+
         <div class="col-md-4">
-            <div class="card shadow-sm border-0 bg-light">
-                <div class="card-header bg-dark text-white">
+            <div class="card shadow-sm custom-card">
+                <div class="card-header">
                     <h5 class="mb-0">Informações Detalhadas</h5>
                 </div>
-                <div class="card-body" style="min-height: 300px;">
+                <div class="card-body p-0" style="min-height: 300px;">
                     @if (selectedCliente != null)
                     {
-                        <ul class="list-group list-group-flush bg-transparent">
-                            <li class="list-group-item bg-transparent"><strong>Nome:</strong> @selectedCliente.Nome</li>
-                            <li class="list-group-item bg-transparent"><strong>NIF:</strong> @selectedCliente.NIF</li>
-                            <li class="list-group-item bg-transparent"><strong>Email:</strong> @selectedCliente.Email</li>
-                            <li class="list-group-item bg-transparent"><strong>Telemóvel:</strong> @selectedCliente.Telemovel</li>
-                            <li class="list-group-item bg-transparent"><strong>Carta:</strong> @selectedCliente.CartaConducao</li>
+                        <ul class="details-list">
+                            <li><strong>Nome:</strong> @selectedCliente.Nome</li>
+                            <li><strong>NIF:</strong> @selectedCliente.NIF</li>
+                            <li><strong>Email:</strong> @selectedCliente.Email</li>
+                            <li><strong>Telemóvel:</strong> @selectedCliente.Telemovel</li>
+                            <li><strong>Carta:</strong> @selectedCliente.CartaConducao</li>
                         </ul>
                     }
                     else
                     {
-                        <div class="text-center py-5 text-muted">
-                            <i class="bi bi-arrow-right-circle d-block mb-2" style="font-size: 2rem;"></i>
+                        <div class="text-center py-5">
                             <p>Selecione um cliente na lista ao lado para ver os detalhes.</p>
                         </div>
                     }
+                </div>
+                <div class="card-footer">
                 </div>
             </div>
         </div>
 
         <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header d-flex justify-content-between">
+            <div class="card shadow-sm custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Lista de Clientes</h5>
                     <a asp-action="Create" class="btn btn-sm btn-primary">Novo Cliente</a>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
+                    <table class="table table-hover custom-table mb-0">
+                        <thead>
                             <tr>
                                 <th>Nome</th>
                                 <th>NIF</th>
@@ -57,23 +59,20 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                // Highlight the row if it's the one selected
-                                string activeClass = (item.Id == selectedId) ? "table-primary" : "";
+                                string activeClass = (item.Id == selectedId) ? "table-selected" : "";
 
-                                <tr class="@activeClass">
-                                    <td>
-                                        <a asp-action="Index" asp-route-id="@item.Id" class="text-decoration-none fw-bold">
-                                            @item.Nome
-                                        </a>
-                                    </td>
+                                <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Mock", new { id = item.Id })'">
+                                    <td>@item.Nome</td>
                                     <td>@item.NIF</td>
-                                    <td class="text-end">
+                                    <td class="text-end action-cell" onclick="event.stopPropagation();">
                                         <partial name="_TabelaAcoes" model="item.Id" />
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+                    <div class="card-footer">
+                    </div>
                 </div>
             </div>
         </div>
