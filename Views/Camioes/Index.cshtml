@@ -2,9 +2,9 @@
 
 @{
     Layout = "_BaseIndex";
-    ViewData["Title"] = "Carros";
+    ViewData["Title"] = "Camiões";
     ViewData["DetalhesTitulo"] = "Informações Detalhadas";
-    ViewData["ListaTitulo"] = "Lista de Carros";
+    ViewData["ListaTitulo"] = "Lista de Camiões";
 
     var selectedId = ViewBag.SelectedId as int?;
     var selectedCamiao = Model.FirstOrDefault(c => c.Id == selectedId);
@@ -24,7 +24,7 @@
     else
     {
         <div class="text-center py-5">
-            <p>Selecione um carro da lista para ver os detalhes completos.</p>
+            <p>Selecione um camião da lista para ver os detalhes completos.</p>
         </div>
     }
 }
@@ -43,7 +43,7 @@
         {
             string activeClass = (item.Id == selectedId) ? "table-selected" : "";
 
-            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Carros", new { id = item.Id })'">
+            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Camioes", new { id = item.Id })'">
                 <td>@item.Matricula</td>
                 <td>@item.Marca @item.Modelo</td>
                 <td>@item.MaxCarga Kg</td>

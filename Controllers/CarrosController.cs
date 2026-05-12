@@ -143,25 +143,6 @@ namespace Projeto_AutoMobile.Controllers
             return View(viewModel);
         }
 
-        // GET: Carros/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var carro = await _context.Carros
-                .Include(c => c.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (carro == null)
-            {
-                return NotFound();
-            }
-
-            return View(carro);
-        }
-
         // POST: Carros/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
