@@ -17,23 +17,11 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Camioes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
             var projeto_AutoMobileContext = _context.Camioes.Include(c => c.Empresa);
+            ViewBag.SelectedId = id;
             return View(await projeto_AutoMobileContext.ToListAsync());
-        }
-
-        // GET: Camioes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var camiao = await _context.Camioes
-                .Include(c => c.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (camiao == null) return NotFound();
-
-            return View(camiao);
         }
 
         // GET: Camioes/Create
@@ -133,21 +121,8 @@ namespace Projeto_AutoMobile.Controllers
             return View(viewModel);
         }
 
-        // GET: Camioes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var camiao = await _context.Camioes
-                .Include(c => c.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (camiao == null) return NotFound();
-
-            return View(camiao);
-        }
-
         // POST: Camioes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -155,8 +130,8 @@ namespace Projeto_AutoMobile.Controllers
             if (camiao != null)
             {
                 _context.Camioes.Remove(camiao);
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

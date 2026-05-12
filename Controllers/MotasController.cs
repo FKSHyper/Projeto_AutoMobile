@@ -20,29 +20,11 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Motas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
             var projeto_AutoMobileContext = _context.Motas.Include(m => m.Empresa);
+            ViewBag.SelectedId = id;
             return View(await projeto_AutoMobileContext.ToListAsync());
-        }
-
-        // GET: Motas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var mota = await _context.Motas
-                .Include(m => m.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (mota == null)
-            {
-                return NotFound();
-            }
-
-            return View(mota);
         }
 
         // GET: Motas/Create
@@ -158,27 +140,8 @@ namespace Projeto_AutoMobile.Controllers
             return View(viewModel);
         }
 
-        // GET: Motas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var mota = await _context.Motas
-                .Include(m => m.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (mota == null)
-            {
-                return NotFound();
-            }
-
-            return View(mota);
-        }
-
         // POST: Motas/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -186,9 +149,8 @@ namespace Projeto_AutoMobile.Controllers
             if (mota != null)
             {
                 _context.Motas.Remove(mota);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

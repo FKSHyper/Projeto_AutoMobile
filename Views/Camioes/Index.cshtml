@@ -1,77 +1,57 @@
 ﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Camiao>
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = "_BaseIndex";
+    ViewData["Title"] = "Camiões";
+    ViewData["DetalhesTitulo"] = "Informações Detalhadas";
+    ViewData["ListaTitulo"] = "Lista de Camiões";
+
+    var selectedId = ViewBag.SelectedId as int?;
+    var selectedCamiao = Model.FirstOrDefault(c => c.Id == selectedId);
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+@section Detalhes {
+    @if (selectedCamiao != null)
+    {
+        <ul class="details-list">
+            <li><strong>Matrícula:</strong>@selectedCamiao.Matricula</li>
+            <li><strong>Estado:</strong>@selectedCamiao.Estado</li>
+            <li><strong>Preço/Dia:</strong>@selectedCamiao.PrecoDia.ToString("C")</li>
+            <li><strong>Carga Maxima:</strong>@selectedCamiao.MaxCarga Kg</li>
+            <li><strong>Disponibilidade:</strong>@selectedCamiao.DataDisponibilidade</li>
+        </ul>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <p>Selecione um camião da lista para ver os detalhes completos.</p>
+        </div>
+    }
+}
+<table class="table table-hover custom-table mb-0">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxCarga)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Matricula)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Marca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Modelo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PrecoDia)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataDisponibilidade)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Empresa)
-            </th>
-            <th></th>
+            <th>Matrícula</th>
+            <th>Marca / Modelo</th>
+            <th>Carga Maxima</th>
+            <th>Preço/Dia</th>
+            <th class="text-end">Ações</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxCarga)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Matricula)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Marca)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Modelo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrecoDia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataDisponibilidade)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Empresa.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            string activeClass = (item.Id == selectedId) ? "table-selected" : "";
+
+            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Camioes", new { id = item.Id })'">
+                <td>@item.Matricula</td>
+                <td>@item.Marca @item.Modelo</td>
+                <td>@item.MaxCarga Kg</td>
+                <td>@item.PrecoDia.ToString("C")</td>
+                <td class="text-end action-cell" onclick="event.stopPropagation();">
+                    <partial name="_TabelaAcoes" model="item.Id" />
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
