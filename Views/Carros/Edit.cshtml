@@ -63,7 +63,8 @@
                         <label asp-for="PrecoDia" class="form-label fw-bold">Preço por Dia (€)</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
-                            <input asp-for="PrecoDia" class="form-control" />
+                            <input asp-for="PrecoDia" class="form-control"
+                                   oninput="this.value = this.value.replace(',', '')" />
                         </div>
                         <span asp-validation-for="PrecoDia" class="text-danger small"></span>
                     </div>
