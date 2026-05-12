@@ -9,7 +9,7 @@
 
             public DateTime DataFim { get; set; }
 
-            public decimal PrecoTotal { get; set; }
+            public double PrecoTotal { get; set; }
 
             // Foreign Keys
             public int ClienteId { get; set; }

@@ -20,7 +20,7 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
         [Required(ErrorMessage = "O preço por dia é obrigatório.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "O preço por dia deve ser um valor positivo.")]
         [Display(Name = "Preço por Dia")]
-        public decimal PrecoDia { get; set; }
+        public double PrecoDia { get; set; }
 
         [Required(ErrorMessage = "O número de eixos é obrigatório.")]
         [Range(2, 3, ErrorMessage = "O número de eixos de uma camioneta tem de ser 2 ou 3.")]

@@ -27,7 +27,7 @@ namespace Projeto_AutoMobile.Data.Projeto_AutoMobile
         public string Modelo { get; set; } = string.Empty;
 
         [Precision(8, 2)]
-        public decimal PrecoDia { get; set; }
+        public double PrecoDia { get; set; }
         public EstadoVeiculo Estado { get; set; } //o Estado é do tipo EtsadoVeiculo
 
         //data prevista para passar ao estado de “disponível”

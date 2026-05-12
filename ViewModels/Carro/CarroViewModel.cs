@@ -18,8 +18,10 @@ namespace Projeto_AutoMobile.ViewModels.Carro
         public string Modelo { get; set; }
 
         [Required(ErrorMessage = "O preço por dia é obrigatório.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O preço por dia deve ser um valor positivo.")]
+        [RegularExpression(@"^[0-9]{1,6}(\.[0-9]{1,2})?$", ErrorMessage = "O número de portas de um carro tem de ser obrigatoriamente 3 ou 5.")]
         [Display(Name = "Preço por Dia")]
-        public decimal PrecoDia { get; set; }
+        public double PrecoDia { get; set; }
         public EstadoVeiculo Estado { get; set; }
 
         [Required(ErrorMessage = "O número de portas é obrigatório.")]
