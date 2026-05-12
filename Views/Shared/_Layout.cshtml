@@ -67,16 +67,22 @@
                     </a>
                 </li>
             </ul>
-
-            <hr class="my-2">
-            <select id="themeSelector" class="form-select w-auto justify-content-end">
-                <option value="light">Light Mode</option>
-                <option value="dark">Dark Mode</option>
-            </select>
         </nav>
 
         <main class="p-4 flex-grow-1">
-            <label for="sidebar-toggle" class="btn btn-theme-menu">☰ Menu</label>
+            <div class="d-flex w-100 justify-content-sm-between">
+                <label for="sidebar-toggle" class="btn btn-theme-menu">☰ Menu</label>
+                <li class="me-3 d-flex align-items-center" style="list-style: none;">
+                    <div class="form-check form-switch mb-0" title="Mudar Tema">
+                        <input class="form-check-input" type="checkbox" role="switch" id="themeSwitch" style="cursor: pointer;">
+
+                        <label class="form-check-label ms-1" for="themeSwitch" id="themeLabel" style="cursor: pointer;">
+                            ☼
+                        </label>
+                    </div>
+                </li>
+            </div>
+            
             @RenderBody()
         </main>
     </div>
@@ -87,23 +93,44 @@
         </div>
     </footer>
     <script>
-        const selector = document.getElementById('themeSelector');
+        const themeSwitch = document.getElementById('themeSwitch');
+        const themeLabel = document.getElementById('themeLabel');
+        const htmlElement = document.documentElement;
 
-        selector.addEventListener('change', (e) => {
-            const theme = e.target.value;
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-        });
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            selector.value = savedTheme;
+        //Qunado mudamos o botao do tema, grava a escolha
+        const savedTheme = localStorage.getItem('theme'); //Verifica se tem algum 'bilhete' guardado
+
+        if (savedTheme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+            themeSwitch.checked = true; // Garante que o botão deslizante está ligado
+            themeLabel.innerText = '☾';
         }
+        // Fica à espera que o botão deslize
+        themeSwitch.addEventListener('change', function () {
+
+            // Se o botão estiver ligado (checked)...
+            if (this.checked) {
+                // 1. Ativa o Modo Escuro no teu CSS
+                document.documentElement.setAttribute('data-theme', 'dark');
+                // 2. Troca o ícone para a Lua
+                themeLabel.innerHTML = '☾';
+                localStorage.setItem('theme', 'dark'); //Cria um 'bilhete' theme com o valor 'dark'
+            }
+            // Se o botão for desligado...
+            else {
+                // 1. Desliga o Modo Escuro (volta ao Claro)
+                document.documentElement.setAttribute('data-theme', 'light');
+                // 2. Troca o ícone para o Sol
+                themeLabel.innerHTML = '☼';
+                localStorage.setItem('theme', 'light');
+            }
+        });
     </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 
 </html>
