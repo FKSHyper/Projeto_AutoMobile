@@ -30,6 +30,19 @@ namespace Projeto_AutoMobile
                 app.UseHsts();
             }
 
+            var defaultCulture = new System.Globalization.CultureInfo("en-US"); /////////
+            defaultCulture.NumberFormat.CurrencySymbol = "€"; // Mantém o Euro
+
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(defaultCulture),
+                SupportedCultures = new List<System.Globalization.CultureInfo> { defaultCulture },
+                SupportedUICultures = new List<System.Globalization.CultureInfo> { defaultCulture }
+            };
+
+            app.UseRequestLocalization(localizationOptions);
+
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
