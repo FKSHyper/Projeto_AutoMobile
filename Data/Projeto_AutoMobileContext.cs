@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
 
 namespace Projeto_AutoMobile.Data
@@ -36,6 +37,43 @@ namespace Projeto_AutoMobile.Data
                 .HasValue<Mota>("Mota")
                 .HasValue<Carro>("Carro");
 
+            // Preco com precision 
+            modelBuilder.Entity<Reserva>()
+                .Property(e => e.PrecoEstimado)
+                .HasPrecision(8, 2);
+
+
+            // Preco com precision
+            modelBuilder.Entity<Veiculo>()
+                .Property(p => p.PrecoDia)
+                .HasPrecision(8, 2);
+
+
+            // Matrícula única para veículos
+            modelBuilder.Entity<Veiculo>()
+                .HasIndex(v => v.Matricula)
+                .IsUnique();
+
+            // NIF único para clientes
+            modelBuilder.Entity<Cliente>()
+                .HasIndex(c => c.NIF)
+                .IsUnique();
+            // Carta de Condução única
+            modelBuilder.Entity<Cliente>()
+                .HasIndex(c => c.CartaConducao)
+                .IsUnique();
+
+            // Email único
+            modelBuilder.Entity<Cliente>()
+                .HasIndex(c => c.Email)
+                .IsUnique();
+
+            //Criar empresa
+            modelBuilder.Entity<Empresa>().HasData(new Empresa
+            {
+                Id = 1,
+                DataAtual = DateTime.Today
+            });
         }
     }
 }
