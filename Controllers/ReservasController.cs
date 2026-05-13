@@ -17,31 +17,15 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Reservas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
             var reservas = await _context.Reservas
                 .Include(r => r.Cliente)
                 .Include(r => r.Veiculo)
                 .ToListAsync();
 
+            ViewBag.SelectedId = id;
             return View(reservas);
-        }
-
-        // GET: Details
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-                return NotFound();
-
-            var reserva = await _context.Reservas
-                .Include(r => r.Cliente)
-                .Include(r => r.Veiculo)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (reserva == null)
-                return NotFound();
-
-            return View(reserva);
         }
 
         // GET: Create
@@ -55,29 +39,31 @@ namespace Projeto_AutoMobile.Controllers
 
         // POST: CALCULAR PREÇO (botão "Atualizar preço")
         [HttpPost]
-        public async Task<IActionResult> CalcularPreco(ReservaViewModel model)
+        public async Task<IActionResult> CalcularPreco(ReservaViewModel model, int? id)
         {
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
             ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
+            ViewBag.SelectedId = id;
 
             var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
+            string nomeDaVista = id == null ? "Create" : "Edit";
 
             if (veiculo == null)
             {
                 ModelState.AddModelError("", "Veículo inválido.");
-                return View("Create", model);
+                return View(nomeDaVista, model);
             }
 
             if (model.DataInicio == default || model.DataFim == default)
             {
                 ModelState.AddModelError("", "Preenche as datas.");
-                return View("Create", model);
+                return View(nomeDaVista, model);
             }
 
             if (model.DataFim < model.DataInicio)
             {
                 ModelState.AddModelError("", "A data final não pode ser anterior à inicial.");
-                return View("Create", model);
+                return View(nomeDaVista, model);
             }
 
             int dias = (model.DataFim - model.DataInicio).Days;
@@ -85,12 +71,12 @@ namespace Projeto_AutoMobile.Controllers
             if (dias <= 0)
             {
                 ModelState.AddModelError("", "A reserva tem de ter pelo menos 1 dia.");
-                return View("Create", model);
+                return View(nomeDaVista, model);
             }
 
             model.PrecoEstimado = dias * veiculo.PrecoDia;
 
-            return View("Create", model);
+            return View(nomeDaVista, model);
         }
 
         // POST: Create (criar reserva final)
@@ -178,6 +164,8 @@ namespace Projeto_AutoMobile.Controllers
         public async Task<IActionResult> Edit(int id, ReservaViewModel model)
         {
             var reserva = await _context.Reservas.FindAsync(id);
+            var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
+            int dias = (model.DataFim - model.DataInicio).Days;
 
             if (reserva == null)
                 return NotFound();
@@ -188,7 +176,9 @@ namespace Projeto_AutoMobile.Controllers
                 reserva.DataFim = model.DataFim;
                 reserva.ClienteId = model.ClienteId;
                 reserva.VeiculoId = model.VeiculoId;
+                reserva.PrecoEstimado = dias * veiculo.PrecoDia;
 
+                _context.Update(reserva);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -201,25 +191,8 @@ namespace Projeto_AutoMobile.Controllers
             return View(model);
         }
 
-        // GET: Delete
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-                return NotFound();
-
-            var reserva = await _context.Reservas
-                .Include(r => r.Cliente)
-                .Include(r => r.Veiculo)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (reserva == null)
-                return NotFound();
-
-            return View(reserva);
-        }
-
         // POST: Delete
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
