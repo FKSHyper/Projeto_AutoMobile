@@ -20,7 +20,7 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // [HttpGet]
-        public async Task<IActionResult> Disponiveis(string tipoSelecionado)
+        public async Task<IActionResult> Disponiveis(string tipoSelecionado, string estadoSelecionado)
         {
             // Vai buscar a empresa para sabermos qual é a "Data Atual" do Simulador
             var empresa = await _context.Empresas.FirstOrDefaultAsync();
@@ -29,16 +29,22 @@ namespace Projeto_AutoMobile.Controllers
             // Vai buscar todos os veículos à Base de Dados
             var frota = await _context.Veiculos.ToListAsync();
 
-            // Só são disponíveis os que têm estado Disponível OU cuja data já expirou perante o simulador
-            var disponiveis = frota.Where(v =>
-                v.Estado == EstadoVeiculo.Disponivel ||
-                (v.DataDisponibilidade.HasValue && v.DataDisponibilidade.Value.Date <= empresa.DataAtual.Date)
-            ).ToList();
+            var resultados = frota.AsEnumerable();
 
-            // O FILTRO DE TIPO DE VEÍCULO:
+            // FILTRO DE TIPO DE VEÍCULO:
             if (!string.IsNullOrEmpty(tipoSelecionado) && tipoSelecionado != "Todos")
             {
-                disponiveis = disponiveis.Where(v => v.GetType().Name == tipoSelecionado).ToList();
+                resultados = resultados.Where(v => v.GetType().Name == tipoSelecionado);
+            }
+
+            // FILTRO DE ESTADO DO VEÍCULO:
+            if (!string.IsNullOrEmpty(estadoSelecionado) && estadoSelecionado != "Todos")
+            {
+                // Converte o estado selecionado para o enum correspondente
+                if (Enum.TryParse(typeof(EstadoVeiculo), estadoSelecionado, out var estadoConvertido))
+                {
+                    resultados = resultados.Where(v => v.Estado == (EstadoVeiculo)estadoConvertido);
+                }
             }
 
             // Montar os dados para o ecrã
@@ -46,7 +52,8 @@ namespace Projeto_AutoMobile.Controllers
             {
                 DataAtual = empresa.DataAtual,
                 TipoSelecionado = tipoSelecionado ?? "Todos",
-                Veiculos = disponiveis
+                EstadoSelecionado = estadoSelecionado ?? "Todos",
+                Veiculos = resultados.ToList()
             };
 
             return View(viewModel);

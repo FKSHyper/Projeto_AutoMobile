@@ -21,7 +21,11 @@ namespace Projeto_AutoMobile.Controllers
         public async Task<IActionResult> Index()
         {
             // Vai buscar a empresa para sabermos qual é a "Data Atual" do Simulador
-            var empresa = await _context.Empresas.FirstOrDefaultAsync();
+            var empresa = await _context.Empresas.Include(e => e.Frota).FirstOrDefaultAsync();
+
+            // Lógica de Alarmes
+            var alarmes = TempData["Alarmes"] as string[];
+            ViewBag.Alarmes = alarmes?.ToList() ?? new List<string>();
 
             // Se ainda não houver empresa registada, não rebenta (usa o dia de hoje)
             DateTime dataSimulador = empresa != null ? empresa.DataAtual : DateTime.Now;
@@ -42,6 +46,39 @@ namespace Projeto_AutoMobile.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AvancarDia()
+        {
+            var empresa = await _context.Empresas.Include(e => e.Frota).FirstOrDefaultAsync();
+            if (empresa == null) return NotFound();
+
+            List<string> alarmes = empresa.AvancarDia();
+
+            _context.Update(empresa);
+            await _context.SaveChangesAsync();
+
+            if (alarmes != null && alarmes.Count > 0)
+                TempData["Alarmes"] = alarmes.ToArray();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecuarDia()
+        {
+            var empresa = await _context.Empresas.FirstOrDefaultAsync();
+            if (empresa == null) return NotFound();
+
+            empresa.RecuarDia();
+            _context.Update(empresa);
+            await _context.SaveChangesAsync();
+
+            TempData["Mensagem"] = "Recuou um dia.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }
