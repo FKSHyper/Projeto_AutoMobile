@@ -36,6 +36,24 @@ namespace Projeto_AutoMobile.Data
                 .HasValue<Mota>("Mota")
                 .HasValue<Carro>("Carro");
 
+            // Matrícula única para veículos
+            modelBuilder.Entity<Veiculo>()
+                .HasIndex(v => v.Matricula)
+                .IsUnique();
+
+            // NIF único para clientes
+            modelBuilder.Entity<Cliente>()
+                .HasIndex(c => c.NIF)
+                .IsUnique();
+            // Carta de Condução única
+            modelBuilder.Entity<Cliente>()
+                .HasIndex(c => c.CartaConducao)
+                .IsUnique();
+
+            // Email único
+            modelBuilder.Entity<Cliente>()
+                .HasIndex(c => c.Email)
+                .IsUnique();
         }
     }
 }

@@ -32,30 +32,6 @@ namespace Projeto_AutoMobile.Controllers
                 return RedirectToAction(nameof(Create));
             }
 
-            // 2. SEGREDO: Se a frota na Base de Dados estiver vazia, vamos enchê-la e GRAVAR
-            if (!empresa.Frota.Any())
-            {
-                // Criar os veículos de teste
-                var carro = new Carro
-                {
-                    Estado = EstadoVeiculo.Alugado,
-                    DataDisponibilidade = DateTime.Now.AddDays(1)
-                };
-                var mota = new Mota
-                {
-                    Estado = EstadoVeiculo.EmManutencao,
-                    DataDisponibilidade = DateTime.Now.AddDays(5)
-                };
-
-                // Adicionar à frota da empresa
-                empresa.Frota.Add(carro);
-                empresa.Frota.Add(mota);
-
-                // GRAVAR NA BASE DE DADOS REAL
-                _context.Update(empresa);
-                await _context.SaveChangesAsync();
-            }
-
             var alarmesGuardados = TempData["Alarmes"] as string[];
 
             var ViewModel = new EmpresaViewModel
