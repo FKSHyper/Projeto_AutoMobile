@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
 using Projeto_AutoMobile.ViewModels.Reserva;
-using Projeto_AutoMobile.ViewModels.Reserva;
 
 namespace Projeto_AutoMobile.Controllers
 {
@@ -28,175 +27,104 @@ namespace Projeto_AutoMobile.Controllers
             return View(reservas);
         }
 
-        // GET: Reservas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-                return NotFound();
-
-            var reserva = await _context.Reservas
-                .Include(r => r.Cliente)
-                .Include(r => r.Veiculo)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (reserva == null)
-                return NotFound();
-
-            return View(reserva);
-        }
-
-        // GET: Reservas/Create
+        // GET: Create
         public IActionResult Create()
         {
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
             ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
 
-            return View();
+            return View(new ReservaViewModel());
         }
 
-        // POST: Reservas/Create
+        // POST: Calcular preço (botão "Atualizar preço")
+        [HttpPost]
+        public async Task<IActionResult> CalcularPreco(ReservaViewModel model)
+        {
+            ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
+            ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
+
+            if (model.DataInicio == default || model.DataFim == default || model.VeiculoId == 0)
+            {
+                ModelState.AddModelError("", "Preenche datas e veículo.");
+                return View("Create", model);
+            }
+
+            if (model.DataFim < model.DataInicio)
+            {
+                ModelState.AddModelError("", "A data final não pode ser anterior à inicial.");
+                return View("Create", model);
+            }
+
+            var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
+
+            if (veiculo == null)
+            {
+                ModelState.AddModelError("", "Veículo não encontrado.");
+                return View("Create", model);
+            }
+
+            int dias = (model.DataFim - model.DataInicio).Days;
+
+            if (dias <= 0)
+            {
+                ModelState.AddModelError("", "A duração tem de ser pelo menos 1 dia.");
+                return View("Create", model);
+            }
+
+            model.PrecoEstimado = dias * veiculo.PrecoDia;
+
+            return View("Create", model);
+        }
+
+        // POST: Create (criar reserva final)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ReservaViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var reserva = new Reserva
-                {
-                    DataInicio = model.DataInicio,
-                    DataFim = model.DataFim,
-                    ClienteId = model.ClienteId,
-                    VeiculoId = model.VeiculoId,
-
-                    // exemplo simples
-                    PrecoTotal = 100
-                };
-
-                _context.Reservas.Add(reserva);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
             ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
 
-            return View(model);
-        }
-
-        // GET: Reservas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-                return NotFound();
-
-            var reserva = await _context.Reservas.FindAsync(id);
-
-            if (reserva == null)
-                return NotFound();
-
-            var model = new ReservaViewModel
+            if (model.DataInicio < DateTime.Today)
             {
-                DataInicio = reserva.DataInicio,
-                DataFim = reserva.DataFim,
-                ClienteId = reserva.ClienteId,
-                VeiculoId = reserva.VeiculoId
+                ModelState.AddModelError("", "A data inicial não pode ser anterior a hoje.");
+                return View(model);
+            }
+
+            if (model.DataFim < model.DataInicio)
+            {
+                ModelState.AddModelError("", "A data final não pode ser anterior à inicial.");
+                return View(model);
+            }
+
+            var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
+
+            if (veiculo == null)
+            {
+                ModelState.AddModelError("", "Veículo inválido.");
+                return View(model);
+            }
+
+            int dias = (model.DataFim - model.DataInicio).Days;
+
+            if (dias <= 0)
+            {
+                ModelState.AddModelError("", "Datas inválidas.");
+                return View(model);
+            }
+
+            var reserva = new Reserva
+            {
+                DataInicio = model.DataInicio,
+                DataFim = model.DataFim,
+                ClienteId = model.ClienteId,
+                VeiculoId = model.VeiculoId,
+                PrecoTotal = dias * veiculo.PrecoDia
             };
 
-            ViewBag.SelectedId = id;
-
-            ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-            ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
-
-            return View(model);
-        }
-
-        // POST: Reservas/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ReservaViewModel model)
-        {
-            var reserva = await _context.Reservas.FindAsync(id);
-
-            if (reserva == null)
-                return NotFound();
-
-            if (ModelState.IsValid)
-            {
-                reserva.DataInicio = model.DataInicio;
-                reserva.DataFim = model.DataFim;
-                reserva.ClienteId = model.ClienteId;
-                reserva.VeiculoId = model.VeiculoId;
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            ViewBag.SelectedId = id;
-
-            ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-            ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
-
-            return View(model);
-        }
-
-        // GET: Reservas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-                return NotFound();
-
-            var reserva = await _context.Reservas
-                .Include(r => r.Cliente)
-                .Include(r => r.Veiculo)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (reserva == null)
-                return NotFound();
-
-            return View(reserva);
-        }
-
-        // POST: Reservas/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var reserva = await _context.Reservas.FindAsync(id);
-
-            if (reserva != null)
-            {
-                _context.Reservas.Remove(reserva);
-                await _context.SaveChangesAsync();
-            }
+            _context.Reservas.Add(reserva);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-        }
-        public IActionResult Faturacao()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Faturacao(DateTime dataInicio, DateTime dataFim)
-        {
-            if (dataFim < dataInicio)
-            {
-                ModelState.AddModelError("", "A data final não pode ser anterior à data inicial.");
-                return View();
-            }
-
-            var total = await _context.Reservas
-                .Where(r => r.DataInicio >= dataInicio && r.DataFim <= dataFim)
-                .SumAsync(r => r.PrecoTotal);
-
-            ViewBag.TotalFaturacao = total;
-            ViewBag.DataInicio = dataInicio;
-            ViewBag.DataFim = dataFim;
-
-            return View();
         }
     }
 }
