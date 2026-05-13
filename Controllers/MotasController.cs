@@ -20,29 +20,11 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Motas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
             var projeto_AutoMobileContext = _context.Motas.Include(m => m.Empresa);
+            ViewBag.SelectedId = id;
             return View(await projeto_AutoMobileContext.ToListAsync());
-        }
-
-        // GET: Motas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var mota = await _context.Motas
-                .Include(m => m.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (mota == null)
-            {
-                return NotFound();
-            }
-
-            return View(mota);
         }
 
         // GET: Motas/Create
@@ -94,8 +76,20 @@ namespace Projeto_AutoMobile.Controllers
             {
                 return NotFound();
             }
+
+            var viewModel = new Projeto_AutoMobile.ViewModels.Mota.MotaViewModel
+            {
+                Matricula = mota.Matricula,
+                Marca = mota.Marca,
+                Modelo = mota.Modelo,
+                PrecoDia = mota.PrecoDia,
+                Cilindrada = mota.Cilindrada,
+                Estado = mota.Estado,
+                DataDisponibilidade = mota.DataDisponibilidade
+            };
+
             ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", mota.EmpresaId);
-            return View(mota);
+            return View(viewModel);
         }
 
         // POST: Motas/Edit/5
@@ -103,23 +97,36 @@ namespace Projeto_AutoMobile.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Cilindrada,Id,Matricula,Marca,Modelo,PrecoDia,Estado,DataDisponibilidade,EmpresaId")] Mota mota)
+        public async Task<IActionResult> Edit(int id, Projeto_AutoMobile.ViewModels.Mota.MotaViewModel viewModel)
         {
-            if (id != mota.Id)
+            if ((viewModel.Estado == EstadoVeiculo.Alugado || viewModel.Estado == EstadoVeiculo.EmManutencao)
+                && (viewModel.DataDisponibilidade == null || viewModel.DataDisponibilidade <= DateTime.Now))
             {
-                return NotFound();
+                ModelState.AddModelError("DataDisponibilidade", "A data é obrigatória se o estado for Alugado ou Em Manutenção.");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(mota);
+                    var editarMota = await _context.Motas.FindAsync(id);
+                    if (editarMota == null) return NotFound();
+
+                    editarMota.Matricula = viewModel.Matricula;
+                    editarMota.Marca = viewModel.Marca;
+                    editarMota.Modelo = viewModel.Modelo;
+                    editarMota.PrecoDia = viewModel.PrecoDia;
+                    editarMota.Cilindrada = viewModel.Cilindrada;
+                    editarMota.Estado = viewModel.Estado;
+                    editarMota.DataDisponibilidade = viewModel.DataDisponibilidade;
+                    editarMota.EmpresaId = 1;
+
+                    _context.Update(editarMota);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MotaExists(mota.Id))
+                    if (!MotaExists(id))
                     {
                         return NotFound();
                     }
@@ -130,31 +137,11 @@ namespace Projeto_AutoMobile.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", mota.EmpresaId);
-            return View(mota);
-        }
-
-        // GET: Motas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var mota = await _context.Motas
-                .Include(m => m.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (mota == null)
-            {
-                return NotFound();
-            }
-
-            return View(mota);
+            return View(viewModel);
         }
 
         // POST: Motas/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -162,9 +149,8 @@ namespace Projeto_AutoMobile.Controllers
             if (mota != null)
             {
                 _context.Motas.Remove(mota);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

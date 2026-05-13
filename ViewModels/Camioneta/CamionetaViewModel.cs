@@ -18,8 +18,9 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
         public string Modelo { get; set; }
 
         [Required(ErrorMessage = "O preço por dia é obrigatório.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O preço por dia deve ser um valor positivo.")]
         [Display(Name = "Preço por Dia")]
-        public decimal PrecoDia { get; set; }
+        public double PrecoDia { get; set; }
 
         [Required(ErrorMessage = "O número de eixos é obrigatório.")]
         [Range(2, 3, ErrorMessage = "O número de eixos de uma camioneta tem de ser 2 ou 3.")]
@@ -30,6 +31,7 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
         public EstadoVeiculo Estado { get; set; }
 
         [Required(ErrorMessage = "O número máximo de passageiros é obrigatório.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O número máximo de passageiros deve ser um número positivo.")]
         [Display(Name = "Máximo de Passageiros")]
         public int MaxPassageiros { get; set; }
 

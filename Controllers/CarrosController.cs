@@ -20,29 +20,11 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Carros
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
             var projeto_AutoMobileContext = _context.Carros.Include(c => c.Empresa);
+            ViewBag.SelectedId = id;
             return View(await projeto_AutoMobileContext.ToListAsync());
-        }
-
-        // GET: Carros/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var carro = await _context.Carros
-                .Include(c => c.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (carro == null)
-            {
-                return NotFound();
-            }
-
-            return View(carro);
         }
 
         // GET: Carros/Create
@@ -119,6 +101,12 @@ namespace Projeto_AutoMobile.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Projeto_AutoMobile.ViewModels.Carro.CarroViewModel viewModel)
         {
+            if ((viewModel.Estado == EstadoVeiculo.Alugado || viewModel.Estado == EstadoVeiculo.EmManutencao) 
+                && (viewModel.DataDisponibilidade == null || viewModel.DataDisponibilidade <= DateTime.Now))
+            {
+                ModelState.AddModelError("DataDisponibilidade", "A data é obrigatória se o estado for Alugado ou Em Manutenção.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -155,27 +143,8 @@ namespace Projeto_AutoMobile.Controllers
             return View(viewModel);
         }
 
-        // GET: Carros/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var carro = await _context.Carros
-                .Include(c => c.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (carro == null)
-            {
-                return NotFound();
-            }
-
-            return View(carro);
-        }
-
         // POST: Carros/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -183,9 +152,8 @@ namespace Projeto_AutoMobile.Controllers
             if (carro != null)
             {
                 _context.Carros.Remove(carro);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

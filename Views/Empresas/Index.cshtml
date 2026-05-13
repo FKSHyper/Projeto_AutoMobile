@@ -1,18 +1,19 @@
-﻿@model IEnumerable<Projeto_AutoMobile.Data.Projeto_AutoMobile.Empresa>
+﻿@model Projeto_AutoMobile.ViewModels.Empresa.EmpresaViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gestão do Simulador";
 }
 
-<h1>Index</h1>
+<h1>Painel do Simulador de Tempo</h1>
 
-@if (TempData["Alarmes"] != null)
+<h3>Data Atual do Sistema: @Model.DataAtual.ToShortDateString()</h3>
+
+@if (Model.Alarmes != null && Model.Alarmes.Count > 0)
 {
-    var avisos = TempData["Alarmes"] as List<string>;
     <div class="alert alert-danger mt-3" style="border: 2px solid red; background-color: #ffe6e6; padding: 15px;">
-        <h4 style="color: red;"> Alarmes do Sistema: </h4>
+        <h4 style="color: red;">Alarmes do Sistema: </h4>
         <ul style="margin-bottom: 0;">
-            @foreach (var aviso in avisos)
+            @foreach (var aviso in Model.Alarmes)
             {
                 <li><strong>@aviso</strong></li>
             }
@@ -27,30 +28,38 @@
     </div>
 }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+<form asp-action="AvancarDia" method="post" class="mb-4 mt-3">
+    <button type="submit" class="btn btn-warning fw-bold">Avançar 1 Dia no Simulador</button>
+</form>
+
+<hr />
+
+<h3>Frota de Veículos</h3>
+<table class="table table-striped">
+    <thead class="table-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DataAtual)
-            </th>
-            <th></th>
+            <th>Matrícula/ID</th>
+            <th>Estado Atual</th>
+            <th>Data Prevista de Disponibilidade</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataAtual)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var veiculo in Model.Frota)
+        {
+            <tr>
+                <td>@veiculo.Id</td>
+                <td>@veiculo.Estado</td>
+                <td>
+                    @if (veiculo.DataDisponibilidade.HasValue)
+                    {
+                        @veiculo.DataDisponibilidade.Value.ToShortDateString()
+                    }
+                    else
+                    {
+                        <span class="text-muted">N/A</span>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

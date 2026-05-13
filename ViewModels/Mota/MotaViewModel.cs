@@ -18,8 +18,9 @@ namespace Projeto_AutoMobile.ViewModels.Mota
         public string Modelo { get; set; }
 
         [Required(ErrorMessage = "O preço por dia é obrigatório.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O preço por dia deve ser um valor positivo.")]
         [Display(Name = "Preço por Dia")]
-        public decimal PrecoDia { get; set; }
+        public double PrecoDia { get; set; }
         public EstadoVeiculo Estado { get; set; }
 
         [Required(ErrorMessage = "A cilindrada é obrigatória.")]

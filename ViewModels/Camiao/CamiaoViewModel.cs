@@ -18,13 +18,15 @@ namespace Projeto_AutoMobile.ViewModels.Camiao
         public string Modelo { get; set; }
 
         [Required(ErrorMessage = "O preço por dia é obrigatório.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O preço por dia deve ser um valor positivo.")]
         [Display(Name = "Preço por Dia")]
-        public decimal PrecoDia { get; set; }
+        public double PrecoDia { get; set; }
 
         [Required(ErrorMessage = "O estado é obrigatório.")]
         public EstadoVeiculo Estado { get; set; }
 
         [Required(ErrorMessage = "A capacidade de carga é obrigatória.")]
+        [Range(1, int.MaxValue, ErrorMessage = "A capacidade de carga deve ser um número positivo.")]
         [Display(Name = "Capacidade de Carga (Kg)")]
         public int MaxCarga { get; set; }
 

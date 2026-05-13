@@ -1,74 +1,99 @@
-﻿@model Projeto_AutoMobile.Data.Projeto_AutoMobile.Carro
+﻿@model Projeto_AutoMobile.ViewModels.Carro.CarroViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    Layout = "_BaseInsert";
+    ViewData["Title"] = "Editar Carro";
 }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h1>Edit</h1>
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="card custom-card h-100">
+                <div class="card-header">
+                    <i class="bi bi-car-front me-2"></i> Especificações do Veículo
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="Matricula" class="form-label fw-bold"></label>
+                        <input asp-for="Matricula" class="form-control" placeholder="AA-00-00" />
+                        <span asp-validation-for="Matricula" class="text-danger small"></span>
+                    </div>
 
-<h4>Carro</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NrPortas" class="control-label"></label>
-                <input asp-for="NrPortas" class="form-control" />
-                <span asp-validation-for="NrPortas" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Marca" class="form-label fw-bold"></label>
+                            <input asp-for="Marca" class="form-control" placeholder="Ex: Mazda" />
+                            <span asp-validation-for="Marca" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Modelo" class="form-label fw-bold"></label>
+                            <input asp-for="Modelo" class="form-control" placeholder="Ex: Série 1" />
+                            <span asp-validation-for="Modelo" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NrPortas" class="form-label fw-bold">Nº de Portas</label>
+                            <input asp-for="NrPortas" class="form-control" />
+                            <span asp-validation-for="NrPortas" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Caixa" class="form-label fw-bold"></label>
+                            <select asp-for="Caixa" class="form-select" asp-items="Html.GetEnumSelectList<Projeto_AutoMobile.Data.Projeto_AutoMobile.TipoCaixa>()">
+                                <option value="">Selecione a Caixa</option>
+                            </select>
+                            <span asp-validation-for="Caixa" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Caixa" class="control-label"></label>
-                <select asp-for="Caixa" class="form-control"></select>
-                <span asp-validation-for="Caixa" class="text-danger"></span>
+        </div>
+
+        <div class="col-lg-5 mb-4">
+            <div class="card custom-card h-100">
+                <div class="card-header">
+                    <i class="bi bi-cash-stack me-2"></i> Gestão e Valores
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="PrecoDia" class="form-label fw-bold">Preço por Dia (€)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
+                            <input asp-for="PrecoDia" class="form-control"
+                                   oninput="this.value = this.value.replace(',', '')" />
+                        </div>
+                        <span asp-validation-for="PrecoDia" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Estado" class="form-label fw-bold"></label>
+                        <select asp-for="Estado" class="form-select">
+                            <option value="">Definir Estado</option>
+                            <option value="Disponivel">Disponível</option>
+                            <option value="EmManutencao">Manutenção</option>
+                            <option value="Alugado">Alugado</option>
+                            <option value="Reservado">Reservado</option>
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 pt-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="bi bi-plus-circle me-2"></i> Guardar Alterações
+                        </button>
+                    </div>
+                </div>
             </div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Matricula" class="control-label"></label>
-                <input asp-for="Matricula" class="form-control" />
-                <span asp-validation-for="Matricula" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Marca" class="control-label"></label>
-                <input asp-for="Marca" class="form-control" />
-                <span asp-validation-for="Marca" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Modelo" class="control-label"></label>
-                <input asp-for="Modelo" class="form-control" />
-                <span asp-validation-for="Modelo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PrecoDia" class="control-label"></label>
-                <input asp-for="PrecoDia" class="form-control" />
-                <span asp-validation-for="PrecoDia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <select asp-for="Estado" class="form-control"></select>
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataDisponibilidade" class="control-label"></label>
-                <input asp-for="DataDisponibilidade" class="form-control" />
-                <span asp-validation-for="DataDisponibilidade" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EmpresaId" class="control-label"></label>
-                <select asp-for="EmpresaId" class="form-control" asp-items="ViewBag.EmpresaId"></select>
-                <span asp-validation-for="EmpresaId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

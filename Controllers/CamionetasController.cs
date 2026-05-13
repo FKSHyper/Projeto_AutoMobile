@@ -18,23 +18,11 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         // GET: Camionetas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
             var projeto_AutoMobileContext = _context.Camionetas.Include(c => c.Empresa);
+            ViewBag.SelectedId = id;
             return View(await projeto_AutoMobileContext.ToListAsync());
-        }
-
-        // GET: Camionetas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var camioneta = await _context.Camionetas
-                .Include(c => c.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (camioneta == null) return NotFound();
-
-            return View(camioneta);
         }
 
         // GET: Camionetas/Create
@@ -100,6 +88,12 @@ namespace Projeto_AutoMobile.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CamionetaViewModel viewModel)
         {
+            if ((viewModel.Estado == EstadoVeiculo.Alugado || viewModel.Estado == EstadoVeiculo.EmManutencao)
+                && (viewModel.DataDisponibilidade == null || viewModel.DataDisponibilidade <= DateTime.Now))
+            {
+                ModelState.AddModelError("DataDisponibilidade", "A data é obrigatória se o estado for Alugado ou Em Manutenção.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -130,21 +124,8 @@ namespace Projeto_AutoMobile.Controllers
             return View(viewModel);
         }
 
-        // GET: Camionetas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var camioneta = await _context.Camionetas
-                .Include(c => c.Empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (camioneta == null) return NotFound();
-
-            return View(camioneta);
-        }
-
         // POST: Camionetas/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -152,8 +133,8 @@ namespace Projeto_AutoMobile.Controllers
             if (camioneta != null)
             {
                 _context.Camionetas.Remove(camioneta);
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

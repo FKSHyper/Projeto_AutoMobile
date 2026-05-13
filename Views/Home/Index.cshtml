@@ -1,8 +1,76 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Projeto_AutoMobile.ViewModels.Veiculos.VeiculosDisponiveisViewModel
+
+@{
+    ViewData["Title"] = "Dashboard - Frota";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Projeto_AutoMobile.styles.css" asp-append-version="true" />
+<link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
+
+<div class="container-fluid custom-container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold"><i class="bi bi-car-front"></i> Gestão de Frota</h3>
+        <div class="badge bg-dark p-2 fs-6">
+            <i class="bi bi-calendar3"></i> Data do Simulador: @Model.DataAtual.ToShortDateString()
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Lista de Veículos</h5>
+                </div>
+
+                <div class="card-body p-0">
+                    <table class="table table-hover custom-table mb-0 align-middle">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Matrícula</th>
+                                <th>Marca / Modelo</th>
+                                <th>Preço / Dia</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Veiculos.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">Ainda não há veículos registados.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var item in Model.Veiculos)
+                                {
+                                    string badgeColor = item.Estado switch
+                                    {
+                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Disponivel => "bg-success",
+                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Alugado => "bg-danger",
+                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Reservado => "bg-warning text-dark",
+                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.EmManutencao => "bg-secondary",
+                                        _ => "bg-dark"
+                                    };
+
+                                    <tr>
+                                        <td class="text-muted fw-bold">@item.GetType().Name</td>
+                                        <td class="text-uppercase">@item.Matricula</td>
+                                        <td>@item.Marca @item.Modelo</td>
+                                        <td class="fw-bold">@item.PrecoDia.ToString("C")</td>
+                                        <td><span class="badge @badgeColor">@Html.DisplayFor(m => item.Estado)</span></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <div class="card-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

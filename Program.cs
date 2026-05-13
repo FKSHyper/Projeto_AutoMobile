@@ -14,6 +14,9 @@ namespace Projeto_AutoMobile
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+            //Teste if connection string is null
+            //if (string.IsNullOrEmpty(connectionString)) { throw new Exception("The baton was dropped! Connection string is null."); }
+
             builder.Services.AddDbContext<Projeto_AutoMobileContext>(options =>
                 options.UseSqlServer(connectionString));
 
@@ -26,6 +29,19 @@ namespace Projeto_AutoMobile
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            var defaultCulture = new System.Globalization.CultureInfo("en-US"); /////////
+            defaultCulture.NumberFormat.CurrencySymbol = "€"; // Mantém o Euro
+
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(defaultCulture),
+                SupportedCultures = new List<System.Globalization.CultureInfo> { defaultCulture },
+                SupportedUICultures = new List<System.Globalization.CultureInfo> { defaultCulture }
+            };
+
+            app.UseRequestLocalization(localizationOptions);
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

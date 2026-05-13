@@ -1,22 +1,25 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
-using Projeto_AutoMobile.ViewModels.Cliente;
 
 namespace Projeto_AutoMobile.Controllers
 {
-    public class ClientesController : Controller
+    public class MockController : Controller
     {
         private readonly Projeto_AutoMobileContext _context;
 
-        public ClientesController(Projeto_AutoMobileContext context)
+        public MockController(Projeto_AutoMobileContext context)
         {
             _context = context;
         }
 
+        // GET: Clientes
         public async Task<IActionResult> Index(int? id)
         {
             var list = await _context.Clientes.ToListAsync();
@@ -24,92 +27,73 @@ namespace Projeto_AutoMobile.Controllers
             return View(list);
         }
 
-        [HttpGet]
+        // GET: Clientes/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Clientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ClienteViewModel model)
+        public async Task<IActionResult> Create([Bind("Id,Nome,NIF,CartaConducao,Email,Telemovel")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
-                var cliente = new Cliente
-                {
-                    Nome = model.Nome,
-                    NIF = model.NIF,
-                    CartaConducao = model.CartaConducao,
-                    Email = model.Email,
-                    Telemovel = model.Telemovel
-                };
-
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
-            return View(model);
+            return View(cliente);
         }
 
-        [HttpGet]
+        // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var cliente = await _context.Clientes.FindAsync(id);
-
-            if (cliente == null) return NotFound();
-
-            var viewModel = new ClienteViewModel
+            if (cliente == null)
             {
-                Nome = cliente.Nome,
-                NIF = cliente.NIF,
-                CartaConducao = cliente.CartaConducao,
-                Email = cliente.Email,
-                Telemovel = cliente.Telemovel
-            };
-            ViewBag.SelectedId = id;
-            return View(viewModel);
+                return NotFound();
+            }
+            return View(cliente);
         }
 
+        // POST: Clientes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ClienteViewModel model)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,NIF,CartaConducao,Email,Telemovel")] Cliente cliente)
         {
-            if (!_context.Clientes.Select(x => x.Id).Contains(id))
+            if (id != cliente.Id)
+            {
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var cliente = await _context.Clientes.FindAsync(id);
-
-                    if (cliente == null) return NotFound();
-
-                    cliente.Nome = model.Nome;
-                    cliente.NIF = model.NIF;
-                    cliente.CartaConducao = model.CartaConducao;
-                    cliente.Email = model.Email;
-                    cliente.Telemovel = model.Telemovel;
-
                     _context.Update(cliente);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClienteExists(id))
+                    if (!ClienteExists(cliente.Id))
+                    {
                         return NotFound();
-
-                    throw;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
-
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(model);
+            return View(cliente);
         }
 
         // POST: Clientes/Delete/5
@@ -123,6 +107,7 @@ namespace Projeto_AutoMobile.Controllers
                 _context.Clientes.Remove(cliente);
                 await _context.SaveChangesAsync();
             }
+            // Volta para a mesma página, agora sem o parâmetro idToDelete na URL
             return RedirectToAction(nameof(Index));
         }
 
