@@ -1,10 +1,11 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
 using Projeto_AutoMobile.ViewModels.Cliente;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Projeto_AutoMobile.Controllers
 {
@@ -45,11 +46,33 @@ namespace Projeto_AutoMobile.Controllers
                     Telemovel = model.Telemovel
                 };
 
-                _context.Add(cliente);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Add(cliente);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException is SqlException sqlEx &&
+                        (sqlEx.Number == 2601 || sqlEx.Number == 2627))
+                    {
+                        if (sqlEx.Message.Contains("IX_Clientes_NIF"))
+                            ModelState.AddModelError("NIF", "Já existe um cliente com esse NIF.");
 
-                return RedirectToAction(nameof(Index));
+                        else if (sqlEx.Message.Contains("IX_Clientes_CartaConducao"))
+                            ModelState.AddModelError("CartaConducao", "Já existe um cliente com essa Carta de Condução.");
+
+                        else if (sqlEx.Message.Contains("IX_Clientes_Email"))
+                            ModelState.AddModelError("Email", "Já existe um cliente com esse Email.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Erro inesperado ao gravar: " + ex.Message);
+                    }
+                }
             }
+
             return View(model);
         }
 
