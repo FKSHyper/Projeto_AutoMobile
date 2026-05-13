@@ -15,7 +15,6 @@
         {
             // Na inicialização usa a data do sistema
             DataAtual = DateTime.Now;
-
         }
 
         // --- Métodos de Gerenciamento de Frota --- //
@@ -53,6 +52,11 @@
             }
 
             return alarmes;
+        }
+        public void RecuarDia()
+        {
+            // Subtrai um dia à data atual do simulador
+            DataAtual = DataAtual.AddDays(-1);
         }
     }
 }

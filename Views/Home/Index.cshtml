@@ -2,7 +2,26 @@
 
 @{
     ViewData["Title"] = "Dashboard - Frota";
+    var alarmes = ViewBag.Alarmes as List<string>;
 }
+
+@if (alarmes != null && alarmes.Any())
+{
+    <div class="d-flex justify-content-center mt-3">
+        <div class="alert alert-danger shadow-lg border-3 w-75">
+            <h4 class="alert-heading text-center">🚨 Notificações de Prazo</h4>
+            <hr>
+            <ul class="mb-0">
+                @foreach (var alarme in alarmes)
+                {
+                    <li class="fw-bold">@alarme</li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<hr class="my-5">
 
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
