@@ -4,6 +4,7 @@ namespace Projeto_AutoMobile.ViewModels.Cliente
 {
     public class ClienteViewModel
     {
+    
         [Required(ErrorMessage = "Nome obrigatório")]
         public string Nome { get; set; }
 

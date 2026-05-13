@@ -1,10 +1,13 @@
-﻿using Projeto_AutoMobile.Data.Projeto_AutoMobile;
+﻿using Microsoft.EntityFrameworkCore;
+using Projeto_AutoMobile.Data.Projeto_AutoMobile;
 using System.ComponentModel.DataAnnotations;
 
 namespace Projeto_AutoMobile.ViewModels.Carro
 {
     public class CarroViewModel
     {
+        private double _precoDia;
+
         [RegularExpression(@"^([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})$",
         ErrorMessage = "Formato inválido. A matricula deve ter um dos seguintes formatos: AA-00-11, 00-AA-11, 11-00-AA.")]
         [Required(ErrorMessage = "A matrícula é obrigatória.")]
@@ -21,7 +24,8 @@ namespace Projeto_AutoMobile.ViewModels.Carro
         [Range(0.01, double.MaxValue, ErrorMessage = "O preço por dia deve ser um valor positivo.")]
         [RegularExpression(@"^[0-9]{1,6}(\.[0-9]{1,2})?$", ErrorMessage = "O número de portas de um carro tem de ser obrigatoriamente 3 ou 5.")]
         [Display(Name = "Preço por Dia")]
-        public double PrecoDia { get; set; }
+        
+        public double PrecoDia { get { return _precoDia; } set { _precoDia = Math.Round(value, 2); } }
         public EstadoVeiculo Estado { get; set; }
 
         [Required(ErrorMessage = "O número de portas é obrigatório.")]
