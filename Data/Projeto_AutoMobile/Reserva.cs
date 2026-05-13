@@ -8,7 +8,7 @@
             public DateTime DataInicio { get; set; }
 
             public DateTime DataFim { get; set; }
-
+            
             public double PrecoEstimado { get; set; }
 
             // Foreign Keys
