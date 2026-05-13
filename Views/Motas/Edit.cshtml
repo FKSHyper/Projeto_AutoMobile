@@ -6,7 +6,7 @@
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<form asp-action="Create">
+<form asp-action="Edit">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="row">
@@ -25,12 +25,12 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="Marca" class="form-label fw-bold"></label>
-                            <input asp-for="Marca" class="form-control" placeholder="Ex: Mazda" />
+                            <input asp-for="Marca" class="form-control" placeholder="Ex: Kawasaki" />
                             <span asp-validation-for="Marca" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="Modelo" class="form-label fw-bold"></label>
-                            <input asp-for="Modelo" class="form-control" placeholder="Ex: Série 1" />
+                            <input asp-for="Modelo" class="form-control" placeholder="Ex: Ninja" />
                             <span asp-validation-for="Modelo" class="text-danger small"></span>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="Cilindrada" class="form-label fw-bold"></label>
-                            <input asp-for="Cilindrada" class="form-control" placeholder="Ex: 5000" />
+                            <input asp-for="Cilindrada" class="form-control" placeholder="Ex: 300cc" />
                             <span asp-validation-for="Cilindrada" class="text-danger small"></span>
                         </div>
                     </div>
@@ -64,15 +64,37 @@
 
                     <div class="mb-3">
                         <label asp-for="Estado" class="form-label fw-bold"></label>
-                        <select asp-for="Estado" class="form-select">
+                        <select asp-for="Estado" id="estadoSelected" class="form-select">
                             <option value="">Definir Estado</option>
                             <option value="Disponivel">Disponível</option>
                             <option value="EmManutencao">Manutenção</option>
-                            <option value="Alugado">Alugado</option>
-                            <option value="Reservado">Reservado</option>
                         </select>
                         <span asp-validation-for="Estado" class="text-danger small"></span>
                     </div>
+                    <div class="row" id="dataSelected" style="display: none;">
+                        <div class="mb-3">
+                            <label asp-for="DataDisponibilidade" class="form-label fw-bold"></label>
+                            <input asp-for="DataDisponibilidade" class="form-control" value="@Model.DataDisponibilidade" />
+                            <span asp-validation-for="DataDisponibilidade" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const dropdown = document.getElementById("estadoSelected");
+                            const container = document.getElementById("dataSelected");
+
+                            function updateVisibility() {
+                                // If value is not "" && not "Disponivel"
+                                if (dropdown.value !== "" && dropdown.value !== "Disponivel") {
+                                    container.style.display = "block";
+                                } else {
+                                    container.style.display = "none";
+                                }
+                            }
+                            dropdown.addEventListener("change", updateVisibility);
+                            updateVisibility();
+                        });
+                    </script>
 
                     <div class="d-grid gap-2 pt-2">
                         <button type="submit" class="btn btn-primary btn-lg shadow-sm">
