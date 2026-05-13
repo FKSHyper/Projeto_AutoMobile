@@ -137,7 +137,7 @@ namespace Projeto_AutoMobile.Controllers
                 DataFim = model.DataFim,
                 ClienteId = model.ClienteId,
                 VeiculoId = model.VeiculoId,
-                PrecoTotal = dias * veiculo.PrecoDia
+                PrecoEstimado = dias * veiculo.PrecoDia
             };
 
             _context.Reservas.Add(reserva);
@@ -253,7 +253,7 @@ namespace Projeto_AutoMobile.Controllers
 
             var total = await _context.Reservas
                 .Where(r => r.DataInicio >= dataInicio && r.DataFim <= dataFim)
-                .SumAsync(r => r.PrecoTotal);
+                .SumAsync(r => r.PrecoEstimado);
 
             ViewBag.TotalFaturacao = total;
             ViewBag.DataInicio = dataInicio;
