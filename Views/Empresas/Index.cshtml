@@ -1,0 +1,65 @@
+﻿@model Projeto_AutoMobile.ViewModels.Empresa.EmpresaViewModel
+
+@{
+    ViewData["Title"] = "Gestão do Simulador";
+    DateTime dataAtual = Model.DataAtual;
+}
+
+<h1>Painel do Simulador de Tempo</h1>
+
+<h3>Data Atual do Sistema: @Model.DataAtual.ToShortDateString()</h3>
+
+@if (Model.Alarmes != null && Model.Alarmes.Count > 0)
+{
+    <div class="alert alert-danger mt-3" style="border: 2px solid red; background-color: #ffe6e6; padding: 15px;">
+        <h4 style="color: red;">Alarmes do Sistema: </h4>
+        <ul style="margin-bottom: 0;">
+            @foreach (var aviso in Model.Alarmes)
+            {
+                <li><strong>@aviso</strong></li>
+            }
+        </ul>
+    </div>
+}
+
+@if (TempData["Mensagem"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["Mensagem"]
+    </div>
+}
+
+<form asp-action="AvancarDia" method="post" class="mb-4 mt-3">
+    <button type="submit" class="btn btn-warning fw-bold">Avançar 1 Dia no Simulador</button>
+</form>
+<hr />
+
+<h3>Frota de Veículos</h3>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Matrícula/ID</th>
+            <th>Estado Atual</th>
+            <th>Data Prevista de Disponibilidade</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var veiculo in Model.Frota)
+        {
+            <tr>
+                <td>@veiculo.Id</td>
+                <td>@veiculo.Estado</td>
+                <td>
+                    @if (veiculo.DataDisponibilidade.HasValue)
+                    {
+                        @veiculo.DataDisponibilidade.Value.ToShortDateString()
+                    }
+                    else
+                    {
+                        <span class="text-muted">N/A</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
