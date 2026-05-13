@@ -15,7 +15,6 @@
         {
             // Na inicialização usa a data do sistema
             DataAtual = DateTime.Now;
-
         }
 
         // --- Métodos de Gerenciamento de Frota --- //
@@ -36,6 +35,28 @@
         {
             // Avança a data em um dia
             DataAtual = DataAtual.AddDays(1);
+
+            // Lista para armazenar alarmes 
+            List<string> alarmes = new List<string>();
+
+            // Verificar o estado de cada veículo
+            foreach (var veiculo in Frota)
+            {
+                if ((veiculo.Estado == EstadoVeiculo.Alugado || veiculo.Estado == EstadoVeiculo.EmManutencao || veiculo.Estado == EstadoVeiculo.Reservado) && veiculo.DataDisponibilidade.HasValue)
+                {
+                    if (DataAtual.Date == veiculo.DataDisponibilidade.Value.Date)
+                    {
+                        alarmes.Add($"ALARME: O veículo com ID {veiculo.Id} terminou o período de '{veiculo.Estado}'.");
+                    }
+                }
+            }
+
+            return alarmes;
+        }
+        public List<string> RecuarDia()
+        {
+            // Avança a data em um dia
+            DataAtual = DataAtual.AddDays(-1);
 
             // Lista para armazenar alarmes 
             List<string> alarmes = new List<string>();

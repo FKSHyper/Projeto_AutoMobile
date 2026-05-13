@@ -109,5 +109,10 @@ namespace Projeto_AutoMobile.Controllers
 
             return File(bytes, "text/csv", "Frota_Veiculos.csv");
         }
+        [HttpPost]
+        public IActionResult AtualizarDataSimulador(DateTime novaData)
+        {
+            return RedirectToAction("Index", new { data = novaData.ToString("yyyy-MM-dd") });
+        }
     }
 }
