@@ -20,23 +20,40 @@ namespace Projeto_AutoMobile.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            // Vai buscar a empresa para sabermos qual é a "Data Atual" do Simulador
+            // Tenta ir buscar a empresa e a sua frota
             var empresa = await _context.Empresas.Include(e => e.Frota).FirstOrDefaultAsync();
 
-            // Lógica de Alarmes
-            var alarmes = TempData["Alarmes"] as string[];
-            ViewBag.Alarmes = alarmes?.ToList() ?? new List<string>();
+            // GARANTIA DA EMPRESA ÚNICA: Se a BD acabou de ser criada e está vazia, cria a empresa automaticamente!
+            if (empresa == null)
+            {
+                empresa = new Empresa(); // O construtor já mete a data de hoje
+                _context.Empresas.Add(empresa);
+                await _context.SaveChangesAsync();
+            }
 
-            // Se ainda não houver empresa registada, não rebenta (usa o dia de hoje)
-            DateTime dataSimulador = empresa != null ? empresa.DataAtual : DateTime.Now;
+            List<string> alarmesAtivos = new List<string>();
 
-            // Vai buscar todos os veículos à Base de Dados
-            var frota = await _context.Veiculos.ToListAsync();
+            foreach (var veiculo in empresa.Frota)
+            {
+                if ((veiculo.Estado == EstadoVeiculo.Alugado || veiculo.Estado == EstadoVeiculo.EmManutencao || veiculo.Estado == EstadoVeiculo.Reservado)
+                    && veiculo.DataDisponibilidade.HasValue)
+                {
+                    // Se a data do simulador é MAIOR OU IGUAL à data de devolução, o alarme fica ativo!
+                    if (empresa.DataAtual.Date >= veiculo.DataDisponibilidade.Value.Date)
+                    {
+                        alarmesAtivos.Add($"ALARME: O veículo ({veiculo.Marca} {veiculo.Modelo} - {veiculo.Matricula}) terminou o período de '{veiculo.Estado}' a {veiculo.DataDisponibilidade.Value.ToShortDateString()}.");
+                    }
+                }
+            }
 
+            // Envia a lista calculada para a View
+            ViewBag.Alarmes = alarmesAtivos;
+
+            // Monta a ViewModel usando os veículos que a empresa tem
             var viewModel = new VeiculosDisponiveisViewModel
             {
-                DataAtual = dataSimulador,
-                Veiculos = frota
+                DataAtual = empresa.DataAtual,
+                Veiculos = empresa.Frota.ToList()
             };
 
             return View(viewModel);
@@ -49,35 +66,32 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AvancarDia()
+        [HttpPost]
+        public async Task<IActionResult> AtualizarDataSimulador(DateTime dataAtual)
         {
             var empresa = await _context.Empresas.Include(e => e.Frota).FirstOrDefaultAsync();
             if (empresa == null) return NotFound();
 
-            List<string> alarmes = empresa.AvancarDia();
+            var alarmesAntigos = TempData["Alarmes"] as string[] ?? new string[0];
+            List<string> todosAlarmes = alarmesAntigos.ToList();
+
+            // Se a data vinda do JavaScript for no FUTURO, avançamos dia-a-dia para não perder alarmes!
+            while (empresa.DataAtual.Date < dataAtual.Date)
+            {
+                var alarmesDoDia = empresa.AvancarDia();
+                todosAlarmes.AddRange(alarmesDoDia); // Junta os alarmes deste dia à lista total
+            }
+
+            // Se a data vinda do JavaScript for no PASSADO, recuamos os dias
+            while (empresa.DataAtual.Date > dataAtual.Date)
+            {
+                var alarmesDoDia = empresa.RecuarDia();
+                todosAlarmes.AddRange(alarmesDoDia);
+            }
 
             _context.Update(empresa);
             await _context.SaveChangesAsync();
 
-            if (alarmes != null && alarmes.Count > 0)
-                TempData["Alarmes"] = alarmes.ToArray();
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RecuarDia()
-        {
-            var empresa = await _context.Empresas.FirstOrDefaultAsync();
-            if (empresa == null) return NotFound();
-
-            empresa.RecuarDia();
-            _context.Update(empresa);
-            await _context.SaveChangesAsync();
-
-            TempData["Mensagem"] = "Recuou um dia.";
             return RedirectToAction(nameof(Index));
         }
     }
