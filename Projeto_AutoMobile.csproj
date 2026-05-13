@@ -10,7 +10,6 @@
     <Folder Include="ViewModels\Cliente\" />
     <Folder Include="ViewModels\Reserva\" />
     <Folder Include="Views\Reservas\" />
-    <Folder Include="Views\Veiculos\Carro\" />
   </ItemGroup>
 
   <ItemGroup>
