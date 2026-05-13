@@ -32,17 +32,32 @@ namespace Projeto_AutoMobile.Controllers
         public IActionResult Create()
         {
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-            ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
+
+            // Filtrar veículos que não têm reservas ativas hoje
+            ViewBag.Veiculos = new SelectList(
+                _context.Veiculos.Where(v =>
+                    !_context.Reservas.Any(r => r.VeiculoId == v.Id &&
+                                                r.DataInicio <= DateTime.Today &&
+                                                r.DataFim >= DateTime.Today)
+                ),
+                "Id", "Marca"
+            );
 
             return View(new ReservaViewModel());
         }
+
 
         // POST: CALCULAR PREÇO (botão "Atualizar preço")
         [HttpPost]
         public async Task<IActionResult> CalcularPreco(ReservaViewModel model, int? id)
         {
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-            ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
+            ViewBag.Veiculos = new SelectList(_context.Veiculos.Where(v =>!_context.Reservas.Any(r => r.VeiculoId == v.Id &&
+                                    r.DataInicio <= model.DataFim &&
+                                    r.DataFim >= model.DataInicio)
+                                    ),
+                                    "Id", "Marca"
+            );
             ViewBag.SelectedId = id;
 
             var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
@@ -87,7 +102,14 @@ namespace Projeto_AutoMobile.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-                ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
+                ViewBag.Veiculos = new SelectList(
+                        _context.Veiculos.Where(v =>
+                                !_context.Reservas.Any(r => r.VeiculoId == v.Id &&
+                                            r.DataInicio <= model.DataFim &&
+                                            r.DataFim >= model.DataInicio)
+                        ),
+                        "Id", "Marca"
+                );
                 return View(model);
             }
 
@@ -115,6 +137,20 @@ namespace Projeto_AutoMobile.Controllers
                 return View(model);
             }
 
+            // Impedir reservas sobrepostas
+            bool existeReserva = await _context.Reservas
+                .AnyAsync(r => r.VeiculoId == model.VeiculoId &&
+                               r.DataInicio < model.DataFim &&
+                               r.DataFim > model.DataInicio);
+
+            if (existeReserva)
+            {
+                ModelState.AddModelError("", "Este veículo já está reservado para o período selecionado.");
+                ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
+                ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
+                return View(model);
+            }
+
             int dias = (model.DataFim - model.DataInicio).Days;
 
             var reserva = new Reserva
@@ -127,6 +163,18 @@ namespace Projeto_AutoMobile.Controllers
             };
 
             _context.Reservas.Add(reserva);
+
+            // Atualizar estado do veículo conforme a data da reserva
+            if (model.DataInicio.Date == DateTime.Today)
+            {
+                veiculo.Estado = EstadoVeiculo.Alugado;
+            }
+            else if (model.DataInicio.Date > DateTime.Today)
+            {
+                // Mantém disponível até à data, mas pode ser marcado como "Reservado" para consultas futuras
+                veiculo.Estado = EstadoVeiculo.Reservado;
+            }
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
