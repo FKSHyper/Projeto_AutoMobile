@@ -18,59 +18,101 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow-sm custom-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Lista de Veículos</h5>
-                </div>
+    <form asp-action="Disponiveis" method="get" class="row align-items-end mb-4 p-3 border rounded bg-light shadow-sm mx-0">
+        <input type="hidden" name="data" value="@Model.DataAtual.ToString("yyyy-MM-dd")" />
 
-                <div class="card-body p-0">
-                    <table class="table table-hover custom-table mb-0 align-middle">
-                        <thead>
+        <div class="col-md-4">
+            <label class="fw-bold mb-1">Tipo de Veículo:</label>
+            <select name="tipoSelecionado" class="form-select">
+                <option value="Todos" selected="@(Model.TipoSelecionado == "Todos")">Mostrar Todos</option>
+                <option value="Carro" selected="@(Model.TipoSelecionado == "Carro")">Carros</option>
+                <option value="Mota" selected="@(Model.TipoSelecionado == "Mota")">Motas</option>
+                <option value="Camioneta" selected="@(Model.TipoSelecionado == "Camioneta")">Camionetas</option>
+                <option value="Camiao" selected="@(Model.TipoSelecionado == "Camiao")">Camiões</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="fw-bold mb-1">Estado do Veículo:</label>
+            <select name="estadoSelecionado" class="form-select">
+                <option value="Todos" selected="@(Model.EstadoSelecionado == "Todos")">Qualquer Estado</option>
+                <option value="Disponivel" selected="@(Model.EstadoSelecionado == "Disponivel")">Disponíveis</option>
+                <option value="Alugado" selected="@(Model.EstadoSelecionado == "Alugado")">Alugados</option>
+                <option value="Reservado" selected="@(Model.EstadoSelecionado == "Reservado")">Reservados</option>
+                <option value="EmManutencao" selected="@(Model.EstadoSelecionado == "EmManutencao")">Em Manutenção</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100 fw-bold">
+                <i class="bi bi-funnel"></i> Aplicar Filtros
+            </button>
+        </div>
+    </form>
+
+    <div class="card shadow-sm custom-card">
+        <div class="card-body p-0">
+            <table class="table table-hover custom-table mb-0 align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID / Matrícula</th>
+                        <th>Tipo / Modelo</th>
+                        <th>Estado Oficial</th>
+                        <th>Status Real (Simulador)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Veiculos.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">Nenhum veículo encontrado.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var veiculo in Model.Veiculos)
+                        {
                             <tr>
-                                <th>Tipo</th>
-                                <th>Matrícula</th>
-                                <th>Marca / Modelo</th>
-                                <th>Preço / Dia</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (!Model.Veiculos.Any())
-                            {
-                                <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">Ainda não há veículos registados.</td>
-                                </tr>
-                            }
-                            else
-                            {
-                                @foreach (var item in Model.Veiculos)
-                                {
-                                    string badgeColor = item.Estado switch
+                                <td class="fw-bold">@veiculo.Id / <span class="text-uppercase">@veiculo.Matricula</span></td>
+                                <td>
+                                    <small class="text-muted d-block">@veiculo.GetType().Name</small>
+                                    @veiculo.Marca @veiculo.Modelo
+                                </td>
+                                <td>
+                                    @{
+                                        string badgeColor = veiculo.Estado switch
+                                        {
+                                            Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Disponivel => "bg-success",
+                                            Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Alugado => "bg-info text-dark",
+                                            Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Reservado => "bg-secondary",
+                                            Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.EmManutencao => "bg-warning text-dark",
+                                            _ => "bg-dark"
+                                        };
+                                    }
+                                    <span class="badge @badgeColor">@Html.DisplayFor(m => veiculo.Estado)</span>
+                                </td>
+                                <td>
+                                    @if (veiculo.Estado != Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Disponivel)
                                     {
-                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Disponivel => "bg-success",
-                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Alugado => "bg-danger",
-                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Reservado => "bg-warning text-dark",
-                                        Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.EmManutencao => "bg-secondary",
-                                        _ => "bg-dark"
-                                    };
-
-                                    <tr>
-                                        <td class="text-muted fw-bold">@item.GetType().Name</td>
-                                        <td class="text-uppercase">@item.Matricula</td>
-                                        <td>@item.Marca @item.Modelo</td>
-                                        <td class="fw-bold">@item.PrecoDia.ToString("C")</td>
-                                        <td><span class="badge @badgeColor">@Html.DisplayFor(m => item.Estado)</span></td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                    <div class="card-footer">
-                    </div>
-                </div>
-            </div>
+                                        if (veiculo.DataDisponibilidade.HasValue && veiculo.DataDisponibilidade.Value.Date <= Model.DataAtual.Date)
+                                        {
+                                            <span class="badge border border-success text-success">Liberado (Expirou @veiculo.DataDisponibilidade.Value.ToShortDateString())</span>
+                                        }
+                                        else if (veiculo.DataDisponibilidade.HasValue)
+                                        {
+                                            <span class="text-muted small">Ocupado até @veiculo.DataDisponibilidade.Value.ToShortDateString()</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-success fw-bold small">Pronto a Alugar</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
