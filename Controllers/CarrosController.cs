@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Projeto_AutoMobile.Controllers
 {
@@ -56,9 +57,28 @@ namespace Projeto_AutoMobile.Controllers
                     EmpresaId = 1 //Colocar um valor senao vai dar erro na bd - EmpresaId é FK
                 };
 
-                _context.Add(carro);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(carro);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException is SqlException sqlEx &&
+                        (sqlEx.Number == 2601 || sqlEx.Number == 2627))
+                    {
+                        // Verifica se foi a matrícula duplicada
+                        if (sqlEx.Message.Contains("IX_Veiculos_Matricula"))
+                        {
+                            ModelState.AddModelError("Matricula", "Já existe um veículo com essa matrícula.");
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Erro inesperado ao gravar: " + ex.Message);
+                    }
+                }
             }
 
             return View(viewModel);

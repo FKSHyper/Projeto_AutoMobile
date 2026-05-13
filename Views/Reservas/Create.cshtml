@@ -1,110 +1,72 @@
-﻿@using System
-@model Projeto_AutoMobile.ViewModels.Reserva.ReservaViewModel
+﻿@model Projeto_AutoMobile.ViewModels.Reserva.ReservaViewModel
 
 @{
-    ViewData["Title"] = "Criar Reserva";
+    Layout = "_BaseInsert";
+    ViewData["Title"] = "Registar Nova Reserva";
     var hoje = DateTime.Today.ToString("yyyy-MM-dd");
 }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
-<h1>Criar Reserva</h1>
-
-<hr />
-
-<div class="row">
-    <div class="col-md-4">
-
-        <form asp-action="Create" method="post">
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <!-- DATA INICIO -->
-            <div class="form-group mb-3">
-                <label asp-for="DataInicio" class="control-label">Data de Início</label>
-
-                <input asp-for="DataInicio"
-                       type="date"
-                       class="form-control"
-                       min="@hoje" />
-
-                <span asp-validation-for="DataInicio" class="text-danger"></span>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="card custom-card h-100">
+                <div class="card-header">
+                    <i class="bi bi-calendar-check me-2"></i> Especificações da Reserva
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="DataInicio" class="form-label fw-bold">Data de Início</label>
+                        <input asp-for="DataInicio" type="date" class="form-control" min="@hoje" />
+                        <span asp-validation-for="DataInicio" class="text-danger "></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DataFim" class="form-label fw-bold">Data de Fim</label>
+                        <input asp-for="DataFim" type="date" class="form-control" min="@hoje" />
+                        <span asp-validation-for="DataFim" class="text-danger "></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ClienteId" class="control-label">Cliente</label>
+                        <select asp-for="ClienteId" asp-items="ViewBag.Clientes" class="form-control">
+                            <option value="">Selecione um cliente</option>
+                        </select>
+                        <span asp-validation-for="ClienteId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="VeiculoId" class="control-label">Veículo</label>
+                        <select asp-for="VeiculoId" asp-items="ViewBag.Veiculos" class="form-control">
+                            <option value="">Selecione um veículo</option>
+                        </select>
+                        <span asp-validation-for="VeiculoId" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-
-            <!-- DATA FIM -->
-            <div class="form-group mb-3">
-                <label asp-for="DataFim" class="control-label">Data de Fim</label>
-
-                <input asp-for="DataFim"
-                       type="date"
-                       class="form-control"
-                       min="@hoje" />
-
-                <span asp-validation-for="DataFim" class="text-danger"></span>
+        </div>
+        <div class="col-lg-5 mb-4">
+            <div class="card custom-card h-100">
+                <div class="card-header">
+                    <i class="bi bi-cash-stack me-2"></i> Calcular Preço Estimado
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label class="control-label">Preço Estimado</label>
+                        <input class="form-control" value="@(Model?.PrecoEstimado.ToString("0.00") + " €" ?? "0.00 €")" readonly />
+                    </div>
+                    <div class="d-grid gap-2 pt-2">
+                        <button type="submit" formaction="@Url.Action("CalcularPreco")"~formmethod="post" class="btn btn-info">
+                            Calcular Preço Estimado
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Criar Reserva
+                        </button>
+                    </div>
+                </div>
             </div>
-
-            <!-- CLIENTE -->
-            <div class="form-group mb-3">
-                <label asp-for="ClienteId" class="control-label">Cliente</label>
-
-                <select asp-for="ClienteId"
-                        asp-items="ViewBag.Clientes"
-                        class="form-control">
-                    <option value="">Selecione um cliente</option>
-                </select>
-
-                <span asp-validation-for="ClienteId" class="text-danger"></span>
-            </div>
-
-            <!-- VEICULO -->
-            <div class="form-group mb-3">
-                <label asp-for="VeiculoId" class="control-label">Veículo</label>
-
-                <select asp-for="VeiculoId"
-                        asp-items="ViewBag.Veiculos"
-                        class="form-control">
-                    <option value="">Selecione um veículo</option>
-                </select>
-
-                <span asp-validation-for="VeiculoId" class="text-danger"></span>
-            </div>
-
-            <!-- PREÇO ESTIMADO -->
-            <div class="form-group mb-3">
-                <label class="control-label">Preço Estimado</label>
-
-                <input class="form-control"
-                       value="@(Model?.PrecoEstimado.ToString("0.00") + " €" ?? "0.00 €")"
-                       readonly />
-            </div>
-
-            <!-- BOTÕES -->
-            <div class="form-group d-flex gap-2">
-
-                <!-- ATUALIZAR PREÇO (vai ao controller recalcular) -->
-                <button type="submit"
-                        formaction="@Url.Action("CalcularPreco")"
-                        formmethod="post"
-                        class="btn btn-info">
-                    Atualizar preço
-                </button>
-
-                <!-- CRIAR RESERVA -->
-                <button type="submit"
-                        class="btn btn-primary">
-                    Criar Reserva
-                </button>
-
-            </div>
-
-        </form>
-
+        </div>
     </div>
-</div>
-
-<div class="mt-3">
-    <a asp-action="Index" class="btn btn-secondary">
-        Voltar à Lista
-    </a>
-</div>
+</form>
 
 @section Scripts {
     @{
