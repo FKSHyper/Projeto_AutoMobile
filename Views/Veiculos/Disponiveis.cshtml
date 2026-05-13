@@ -1,64 +1,113 @@
 ﻿@model Projeto_AutoMobile.ViewModels.Veiculos.VeiculosDisponiveisViewModel
 
 @{
-    ViewData["Title"] = "Veículos Disponíveis";
+    ViewData["Title"] = "Pesquisa de Veículos";
 }
 
 <div class="container mt-4">
-    <h2 class="mb-3">Veículos Disponíveis para Aluguer</h2>
-    <h5 class="text-muted mb-4">Data do simulador: <strong>@Model.DataAtual.ToShortDateString()</strong></h5>
+    <h2 class="mb-3">Pesquisa Global de Veículos</h2>
+    <h5 class="text-muted mb-4">A ter em conta a data do simulador: <strong>@Model.DataAtual.ToShortDateString()</strong></h5>
 
-    <form asp-action="Disponiveis" method="get" class="d-flex align-items-center mb-4 p-3 border rounded bg-light">
-        <label class="me-3 fw-bold">Filtrar por Tipo de Veículo:</label>
-        
-        <select name="tipoSelecionado" class="form-select w-auto me-3">
-            <option value="Todos" selected="@(Model.TipoSelecionado == "Todos")">Mostrar Todos</option>
-            <option value="Carro" selected="@(Model.TipoSelecionado == "Carro")">Carros</option>
-            <option value="Mota" selected="@(Model.TipoSelecionado == "Mota")">Motas</option>
-            <option value="Camioneta" selected="@(Model.TipoSelecionado == "Camioneta")">Camionetas</option>
-            
-            <option value="Camiao" selected="@(Model.TipoSelecionado == "Camiao")">Camiões</option>
-        </select>
-        
-        <button type="submit" class="btn btn-primary">Aplicar Filtro</button>
+    <form asp-action="Disponiveis" method="get" class="row align-items-end mb-4 p-3 border rounded bg-light shadow-sm">
+
+        <div class="col-md-4">
+            <label class="fw-bold mb-1">Tipo de Veículo:</label>
+            <select name="tipoSelecionado" class="form-select">
+                <option value="Todos" selected="@(Model.TipoSelecionado == "Todos")">Mostrar Todos</option>
+                <option value="Carro" selected="@(Model.TipoSelecionado == "Carro")">Carros</option>
+                <option value="Mota" selected="@(Model.TipoSelecionado == "Mota")">Motas</option>
+                <option value="Camioneta" selected="@(Model.TipoSelecionado == "Camioneta")">Camionetas</option>
+                <option value="Camiao" selected="@(Model.TipoSelecionado == "Camiao")">Camiões</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="fw-bold mb-1">Estado do Veículo:</label>
+            <select name="estadoSelecionado" class="form-select">
+                <option value="Todos" selected="@(Model.EstadoSelecionado == "Todos")">Qualquer Estado</option>
+                <option value="Disponivel" selected="@(Model.EstadoSelecionado == "Disponivel")">Disponíveis</option>
+                <option value="Alugado" selected="@(Model.EstadoSelecionado == "Alugado")">Alugados</option>
+                <option value="Reservado" selected="@(Model.EstadoSelecionado == "Reservado")">Reservados</option>
+                <option value="EmManutencao" selected="@(Model.EstadoSelecionado == "EmManutencao")">Em Manutenção</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100 fw-bold">
+                <span style="font-size: 1.1em;"></span> Aplicar Filtros
+            </button>
+        </div>
     </form>
 
-    <table class="table table-hover table-striped border">
+    <table class="table table-hover table-striped border shadow-sm">
         <thead class="table-dark">
             <tr>
                 <th>ID / Matrícula</th>
-                <th>Tipo de Veículo</th>
+                <th>Tipo</th>
                 <th>Estado Oficial</th>
-                <th>Status Real (Data Simulador)</th>
+                <th>Status Real (Baseado no Simulador)</th>
             </tr>
         </thead>
         <tbody>
             @if (!Model.Veiculos.Any())
             {
                 <tr>
-                    <td colspan="4" class="text-center p-4">Nenhum veículo disponível para o filtro selecionado.</td>
+                    <td colspan="4" class="text-center p-4 fs-5 text-muted">
+                        Nenhum veículo encontrado com estes filtros.
+                    </td>
                 </tr>
             }
-            
+
             @foreach (var veiculo in Model.Veiculos)
             {
                 <tr>
                     <td class="align-middle fw-bold">@veiculo.Id</td>
-                    
+
                     <td class="align-middle">@veiculo.GetType().Name</td>
-                    
-                    <td class="align-middle">@veiculo.Estado</td>
-                    
+
+                    <td class="align-middle">
+                        @if (veiculo.Estado == Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Disponivel)
+                        {
+                            <span class="badge bg-success">Disponível</span>
+                        }
+                        else if (veiculo.Estado == Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Alugado)
+                        {
+
+                            <span class="badge bg-info text-dark">Alugado</span>
+                        }
+                        else if (veiculo.Estado == Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Reservado)
+                        {
+
+                            <span class="badge bg-secondary">Reservado</span>
+                        }
+                        else if (veiculo.Estado == Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.EmManutencao)
+                        {
+
+                            <span class="badge bg-warning text-dark">Em Manutenção</span>
+                        }
+                    </td>
+
                     <td class="align-middle">
                         @if (veiculo.Estado != Projeto_AutoMobile.Data.Projeto_AutoMobile.EstadoVeiculo.Disponivel)
                         {
-                            <span class="badge bg-success" style="font-size: 0.9em;">
-                                Disponível (Data expirou a @veiculo.DataDisponibilidade.Value.ToShortDateString())
-                            </span>
+                            if (veiculo.DataDisponibilidade.HasValue && veiculo.DataDisponibilidade.Value.Date <= Model.DataAtual.Date)
+                            {
+                                <span class="badge border border-success text-success" style="font-size: 0.9em;">
+                                    Já está Livre (Prazo expirou a @veiculo.DataDisponibilidade.Value.ToShortDateString())
+                                </span>
+                            }
+                            else if (veiculo.DataDisponibilidade.HasValue)
+                            {
+                                <span class="text-muted">Ocupado até @veiculo.DataDisponibilidade.Value.ToShortDateString()</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Sem data de fim</span>
+                            }
                         }
                         else
                         {
-                            <span class="badge bg-primary" style="font-size: 0.9em;">Pronto a Alugar</span>
+                            <span class="text-success fw-bold">Pronto a Alugar</span>
                         }
                     </td>
                 </tr>
