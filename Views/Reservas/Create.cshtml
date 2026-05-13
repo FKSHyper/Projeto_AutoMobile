@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Criar Reserva";
-        var hoje = DateTime.Today.ToString("yyyy-MM-dd");
+    var hoje = DateTime.Today.ToString("yyyy-MM-dd");
 }
 
 <h1>Criar Reserva</h1>
@@ -13,91 +13,86 @@
 <div class="row">
     <div class="col-md-4">
 
-        <form asp-action="Create">
+        <form asp-action="Create" method="post">
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- DATA INICIO -->
             <div class="form-group mb-3">
-                <label asp-for="DataInicio" class="control-label">
-                    Data de Início
-                </label>
+                <label asp-for="DataInicio" class="control-label">Data de Início</label>
 
                 <input asp-for="DataInicio"
                        type="date"
                        class="form-control"
                        min="@hoje" />
 
-                <span asp-validation-for="DataInicio"
-                      class="text-danger"></span>
+                <span asp-validation-for="DataInicio" class="text-danger"></span>
             </div>
 
+            <!-- DATA FIM -->
             <div class="form-group mb-3">
-                <label asp-for="DataFim" class="control-label">
-                    Data de Fim
-                </label>
+                <label asp-for="DataFim" class="control-label">Data de Fim</label>
 
                 <input asp-for="DataFim"
                        type="date"
                        class="form-control"
                        min="@hoje" />
 
-                <span asp-validation-for="DataFim"
-                      class="text-danger"></span>
+                <span asp-validation-for="DataFim" class="text-danger"></span>
             </div>
 
+            <!-- CLIENTE -->
             <div class="form-group mb-3">
-                <label asp-for="ClienteId" class="control-label">
-                    Cliente
-                </label>
+                <label asp-for="ClienteId" class="control-label">Cliente</label>
 
                 <select asp-for="ClienteId"
                         asp-items="ViewBag.Clientes"
                         class="form-control">
-
-                    <option value="">
-                        Selecione um cliente
-                    </option>
-
+                    <option value="">Selecione um cliente</option>
                 </select>
 
-                <span asp-validation-for="ClienteId"
-                      class="text-danger"></span>
+                <span asp-validation-for="ClienteId" class="text-danger"></span>
             </div>
 
+            <!-- VEICULO -->
             <div class="form-group mb-3">
-                <label asp-for="VeiculoId" class="control-label">
-                    Veículo
-                </label>
+                <label asp-for="VeiculoId" class="control-label">Veículo</label>
 
                 <select asp-for="VeiculoId"
                         asp-items="ViewBag.Veiculos"
                         class="form-control">
-
-                    <option value="">
-                        Selecione um veículo
-                    </option>
-
+                    <option value="">Selecione um veículo</option>
                 </select>
 
-                <span asp-validation-for="VeiculoId"
-                      class="text-danger"></span>
+                <span asp-validation-for="VeiculoId" class="text-danger"></span>
             </div>
 
+            <!-- PREÇO ESTIMADO -->
             <div class="form-group mb-3">
-                <label class="control-label">
-                    Preço Estimado
-                </label>
+                <label class="control-label">Preço Estimado</label>
 
-                @* in Views/Reservas/Create.cshtml *@
                 <input class="form-control"
-       value="@(Model == null ? "0.00 €" : Model.PrecoEstimado.ToString("0.00") + " €")"
-       readonly />
+                       value="@(Model?.PrecoEstimado.ToString("0.00") + " €" ?? "0.00 €")"
+                       readonly />
             </div>
 
-            <div class="form-group">
-                <input type="submit"
-                       value="Criar Reserva"
-                       class="btn btn-primary" />
+            <!-- BOTÕES -->
+            <div class="form-group d-flex gap-2">
+
+                <!-- ATUALIZAR PREÇO (vai ao controller recalcular) -->
+                <button type="submit"
+                        formaction="@Url.Action("CalcularPreco")"
+                        formmethod="post"
+                        class="btn btn-info">
+                    Atualizar preço
+                </button>
+
+                <!-- CRIAR RESERVA -->
+                <button type="submit"
+                        class="btn btn-primary">
+                    Criar Reserva
+                </button>
+
             </div>
 
         </form>

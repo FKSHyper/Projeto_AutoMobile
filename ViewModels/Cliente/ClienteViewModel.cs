@@ -14,6 +14,7 @@ namespace Projeto_AutoMobile.ViewModels.Cliente
         [Required(ErrorMessage = "Carta de condução obrigatória")]
         public string CartaConducao { get; set; }
 
+        [Required(ErrorMessage = "Email obrigatório")]
         [EmailAddress(ErrorMessage = "Email inválido")]
         public string Email { get; set; }
 
