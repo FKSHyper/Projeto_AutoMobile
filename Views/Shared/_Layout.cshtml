@@ -10,10 +10,24 @@
     <link rel="stylesheet" href="../Views/Shared/_Layout.cshtml.css" />
 </head>
 @functions {
-        string IsActive(string controller)
+        string IsActive(string controller, string specificAction = null, string excludeAction = null)
         {
-                var current = ViewContext.RouteData.Values["controller"]?.ToString();
-                return string.Equals(current, controller, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+                var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+                // Se não estivermos no mesmo Controlador, não acende
+                if (!string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase))
+                        return "";
+
+                // Se estivermos na Action que queremos excluir (ex: Faturacao), não acende
+                if (!string.IsNullOrEmpty(excludeAction) && string.Equals(currentAction, excludeAction, StringComparison.OrdinalIgnoreCase))
+                        return "";
+
+                // Se pedimos uma Action específica e não estivermos nela, não acende
+                if (!string.IsNullOrEmpty(specificAction) && !string.Equals(currentAction, specificAction, StringComparison.OrdinalIgnoreCase))
+                        return "";
+
+                return "active";
         }
 }
 <body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
@@ -42,7 +56,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Reservas")" asp-controller="Reservas" asp-action="Index">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Reservas", excludeAction: "Faturacao")" asp-controller="Reservas" asp-action="Index">
                         Reservas
                     </a>
                 </li>
@@ -72,8 +86,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Empresas")" asp-controller="Empresas" asp-action="Index">
-                        Empresas
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Reservas", specificAction: "Faturacao")" asp-controller="Reservas" asp-action="Faturacao">
+                        Faturação
                     </a>
                 </li>
             </ul>

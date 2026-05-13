@@ -21,13 +21,15 @@ namespace Projeto_AutoMobile.Data.Projeto_AutoMobile
 
     public abstract class Veiculo
     {
+        private double _precoDia;
         public int Id { get; set; }
         public string Matricula { get; set; } = string.Empty;
         public string Marca {  get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
+       
 
         [Precision(8, 2)]
-        public double PrecoDia { get; set; }
+        public double PrecoDia { get { return _precoDia; } set { _precoDia=Math.Round(value, 2); } }
         public EstadoVeiculo Estado { get; set; } //o Estado é do tipo EtsadoVeiculo
 
         //data prevista para passar ao estado de “disponível”
