@@ -38,7 +38,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="NrPortas" class="form-label fw-bold">Nº de Portas</label>
-                            <input asp-for="NrPortas" class="form-control" />
+                            <select asp-for="NrPortas" class="form-select">
+                                <option value="" disabled selected>Selecione o nº de portas...</option>
+                                <option value="3">3 Portas</option>
+                                <option value="5">5 Portas</option>
+                            </select>
                             <span asp-validation-for="NrPortas" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -71,16 +75,37 @@
 
                     <div class="mb-3">
                         <label asp-for="Estado" class="form-label fw-bold"></label>
-                        <select asp-for="Estado" class="form-select">
+                        <select asp-for="Estado" id="estadoSelected" class="form-select">
                             <option value="">Definir Estado</option>
                             <option value="Disponivel">Disponível</option>
                             <option value="EmManutencao">Manutenção</option>
-                            <option value="Alugado">Alugado</option>
-                            <option value="Reservado">Reservado</option>
                         </select>
                         <span asp-validation-for="Estado" class="text-danger small"></span>
                     </div>
+                    <div class="row" id="dataSelected" style="display: none;">
+                        <div class="mb-3">
+                            <label asp-for="DataDisponibilidade" class="form-label fw-bold"></label>
+                            <input asp-for="DataDisponibilidade" class="form-control" value="@Model.DataDisponibilidade" />
+                            <span asp-validation-for="DataDisponibilidade" class="text-danger small"></span>
+                        </div>  
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const dropdown = document.getElementById("estadoSelected");
+                            const container = document.getElementById("dataSelected");
 
+                            function updateVisibility() {
+                                // If value is not "" && not "Disponivel"
+                                if (dropdown.value !== "" && dropdown.value !== "Disponivel") {
+                                    container.style.display = "block";
+                                } else {
+                                    container.style.display = "none";
+                                }
+                            }
+                            dropdown.addEventListener("change", updateVisibility);
+                            updateVisibility();
+                        });
+                    </script>
                     <div class="d-grid gap-2 pt-2">
                         <button type="submit" class="btn btn-primary btn-lg shadow-sm">
                             <i class="bi bi-plus-circle me-2"></i> Guardar Alterações

@@ -52,7 +52,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-1 px-2 text-nowrap @IsActive(" Motas")" asp-controller="Motas" asp-action="Index">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Motas")" asp-controller="Motas" asp-action="Index">
                         Motas
                     </a>
                 </li>
@@ -66,7 +66,17 @@
                         Camionetas
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link py-1 px-2 text-nowrap @IsActive("Empresas")" asp-controller="Empresas" asp-action="Index">
+                        Empresas
+                    </a>
+                </li>
             </ul>
+            <hr>
+            <div>
+                <button type="button" onclick="incrementDate()">Add One Day</button>
+                <button type="button" onclick="decrementDate()">Minus One Day</button>
+            </div>
         </nav>
 
         <main class="p-4 flex-grow-1">

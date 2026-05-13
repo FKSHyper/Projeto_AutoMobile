@@ -2,11 +2,12 @@
 
 @{
     ViewData["Title"] = "Gestão do Simulador";
+    DateTime dataAtual = Model.DataAtual;
 }
 
 <h1>Painel do Simulador de Tempo</h1>
 
-<h3>Data Atual do Sistema: @Model.DataAtual.ToShortDateString()</h3>
+<h3>Data Atual do Sistema: <span id="displayDate">@dataAtual</span></h3>
 
 @if (Model.Alarmes != null && Model.Alarmes.Count > 0)
 {
@@ -28,9 +29,28 @@
     </div>
 }
 
-<form asp-action="AvancarDia" method="post" class="mb-4 mt-3">
-    <button type="submit" class="btn btn-warning fw-bold">Avançar 1 Dia no Simulador</button>
-</form>
+<button type="button" onclick="incrementDate()">Add One Day</button>
+<button type="button" onclick="decrementDate()">Minus One Day</button>
+
+<script>
+    // Initialize a JS Date object using the server-side value
+    let currentDate = new Date('@dataAtual.ToString("yyyy-MM-ddTHH:mm:ss")');
+
+    function incrementDate() {
+        // Increment the day
+        currentDate.setDate(currentDate.getDate() + 1);
+
+        // Update the display (formatting it back to a readable string)
+        document.getElementById('displayDate').innerText = currentDate.toLocaleDateString();
+    }
+    function decrementDate() {
+        // Increment the day
+        currentDate.setDate(currentDate.getDate() - 1);
+
+        // Update the display (formatting it back to a readable string)
+        document.getElementById('displayDate').innerText = currentDate.toLocaleDateString();
+    }
+</script>
 
 <hr />
 
