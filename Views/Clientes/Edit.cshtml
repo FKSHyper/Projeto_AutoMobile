@@ -5,7 +5,8 @@
     ViewData["Title"] = "Editar Cliente";
     var selectedId = ViewBag.SelectedId as int?;
 }
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <form asp-action="Edit" asp-route-id="@selectedId">
     <input type="hidden" name="id" value="@selectedId" />
     <div class="row">
