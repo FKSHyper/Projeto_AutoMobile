@@ -1,11 +1,11 @@
+using System.Diagnostics;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
 using Projeto_AutoMobile.Data.Projeto_AutoMobile;
 using Projeto_AutoMobile.Models;
 using Projeto_AutoMobile.ViewModels.Veiculos;
-using System.Diagnostics;
-using System.Text;
 
 namespace Projeto_AutoMobile.Controllers
 {
@@ -33,21 +33,32 @@ namespace Projeto_AutoMobile.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            var todasReservas = await _context.Reservas.ToListAsync();
+
+            // Passa as reservas para a View (necessário para calcular os estados em tempo real no HTML)
+            ViewBag.TodasReservas = todasReservas;
+
             List<string> alarmesAtivos = new List<string>();
-            
+
             foreach (var veiculo in frota)
             {
-                if ((veiculo.Estado == EstadoVeiculo.Alugado || veiculo.Estado == EstadoVeiculo.EmManutencao || veiculo.Estado == EstadoVeiculo.Reservado)
-                    && veiculo.DataDisponibilidade.HasValue)
+                var reservaNoPrazoLimite = todasReservas.FirstOrDefault(r => r.VeiculoId == veiculo.Id && empresa.DataAtual.Date >= r.DataFim.Date);
+
+                if (reservaNoPrazoLimite != null)
+                {
+                    alarmesAtivos.Add($"ALARME: O veículo {veiculo.Marca} {veiculo.Modelo} - {veiculo.Matricula} terminou o período de reserva a {reservaNoPrazoLimite.DataFim.ToShortDateString()}.");
+                }
+
+                // Verifica, de forma independente, se o veículo está na oficina e tem uma data de saída definida.
+                if (veiculo.Estado == EstadoVeiculo.EmManutencao && veiculo.DataDisponibilidade.HasValue)
                 {
                     // Se a data do simulador é MAIOR OU IGUAL à data de devolução, o alarme fica ativo!
                     if (empresa.DataAtual.Date >= veiculo.DataDisponibilidade.Value.Date)
                     {
-                        alarmesAtivos.Add($"ALARME: O veículo ({veiculo.Marca} {veiculo.Modelo} - {veiculo.Matricula}) terminou o período de '{veiculo.Estado}' a {veiculo.DataDisponibilidade.Value.ToShortDateString()}.");
+                        alarmesAtivos.Add($"ALARME: O veículo {veiculo.Marca} {veiculo.Modelo} - {veiculo.Matricula} terminou o período de manutenção a {veiculo.DataDisponibilidade.Value.ToShortDateString()}.");
                     }
                 }
             }
-
             // Envia a lista calculada para a View
             ViewBag.Alarmes = alarmesAtivos;
 
@@ -123,7 +134,6 @@ namespace Projeto_AutoMobile.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         public async Task<IActionResult> AtualizarDataSimulador(DateTime dataAtual)
         {
             var empresa = await _context.Empresas.Include(e => e.Frota).FirstOrDefaultAsync();
@@ -151,7 +161,7 @@ namespace Projeto_AutoMobile.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> ExportarCSV()
         {
