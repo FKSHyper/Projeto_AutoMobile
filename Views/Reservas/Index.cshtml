@@ -8,16 +8,17 @@
 
     var selectedId = ViewBag.SelectedId as int?;
     var selectedReserva = Model.FirstOrDefault(c => c.Id == selectedId);
+    Console.WriteLine(selectedReserva);
 }
 
 @section Detalhes {
     @if (selectedReserva != null)
     {
         <ul class="details-list">
-            <li><strong>Data de Ínicio:</strong>@selectedReserva.DataInicio</li>
-            <li><strong>Data de Fim:</strong>@selectedReserva.DataFim</li>
-            <li><strong>Cliente:</strong>@selectedReserva.ClienteId</li>
-            <li><strong>Veiculo:</strong>@selectedReserva.VeiculoId</li>
+            <li><strong>Data de Ínicio:</strong>@selectedReserva.DataInicio.ToShortDateString()</li>
+            <li><strong>Data de Fim:</strong>@selectedReserva.DataFim.ToShortDateString()</li>
+            <li><strong>Cliente:</strong>@selectedReserva.Cliente.Nome, @selectedReserva.Cliente.CartaConducao</li>
+            <li><strong>Veiculo:</strong>@selectedReserva.Veiculo.TipoVeiculo, @selectedReserva.Veiculo.Marca, @selectedReserva.Veiculo.Matricula</li>
             <li><strong>Preço Estimado:</strong> @selectedReserva.PrecoEstimado</li>
         </ul>
     }
@@ -47,7 +48,7 @@
 
             <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Reservas", new { id = item.Id })'"">
                 <td>@item.Cliente.Nome</td>
-                <td>@item.Veiculo.Id</td>
+                <td>@item.Veiculo.TipoVeiculo | @item.Veiculo.Matricula</td>
                 <td>@item.DataInicio.ToShortDateString()</td>
                 <td>@item.DataFim.ToShortDateString()</td>
                 <td>@item.PrecoEstimado €</td>
