@@ -4,6 +4,8 @@
     Layout = "_BaseInsert";
     ViewData["Title"] = "Registar Nova Reserva";
     var hoje = DateTime.Today.ToString("yyyy-MM-dd");
+    string dataInicio = ViewBag.dataInicio != null ? ViewBag.dataInicio : hoje;
+    string dataFim = ViewBag.dataFim != null ? ViewBag.dataFim : hoje;
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -19,12 +21,12 @@
                 <div class="card-body p-4">
                     <div class="mb-3">
                         <label asp-for="DataInicio" class="form-label fw-bold">Data de Início</label>
-                        <input asp-for="DataInicio" type="date" class="form-control" min="@hoje" value="@hoje"/>
+                        <input asp-for="DataInicio" type="date" class="form-control" min="@hoje" value="@dataInicio" />
                         <span asp-validation-for="DataInicio" class="text-danger "></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="DataFim" class="form-label fw-bold">Data de Fim</label>
-                        <input asp-for="DataFim" type="date" class="form-control" min="@hoje" value="@hoje"/>
+                        <input asp-for="DataFim" type="date" class="form-control" min="@hoje" value="@dataFim" />
                         <span asp-validation-for="DataFim" class="text-danger "></span>
                     </div>
                     <div class="mb-3">
