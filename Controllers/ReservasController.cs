@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer.DateTimeHumanizeStrategy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
@@ -258,9 +259,12 @@ namespace Projeto_AutoMobile.Controllers
                 return View();
             }
 
-            var total = await _context.Reservas
+            var precos = await _context.Reservas
                 .Where(r => r.DataInicio >= dataInicio && r.DataFim <= dataFim)
-                .SumAsync(r => r.PrecoEstimado);
+                .Select(r => r.PrecoEstimado)
+                .ToListAsync();
+
+            var total = precos.Sum();
 
             ViewBag.TotalFaturacao = total;
             ViewBag.DataInicio = dataInicio;
