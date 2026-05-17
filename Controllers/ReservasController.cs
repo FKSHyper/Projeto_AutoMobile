@@ -176,6 +176,31 @@ namespace Projeto_AutoMobile.Controllers
             if (reserva == null)
                 return NotFound();
 
+            if (model.DataInicio < DateTime.Today)
+            {
+                ModelState.AddModelError("", "A data inicial não pode ser anterior a hoje.");
+
+            }
+
+            if (model.DataFim < model.DataInicio)
+            {
+                ModelState.AddModelError("", "Datas inválidas.");
+
+            }
+
+            var existeReserva = await _context.Reservas
+               .Where(r => r.VeiculoId == model.VeiculoId &&
+                               r.DataInicio < model.DataFim &&
+                               r.DataFim > model.DataInicio)
+               .OrderBy(r => r.DataInicio)
+               .FirstOrDefaultAsync();
+
+            if (existeReserva != null)
+            {
+                ModelState.AddModelError("", $"Este veículo já está reservado no período de {existeReserva.DataInicio:dd-MM-yyyy} a {existeReserva.DataFim:dd-MM-yyyy}.");
+            }
+
+
             if (ModelState.IsValid)
             {
                 reserva.DataInicio = model.DataInicio;
