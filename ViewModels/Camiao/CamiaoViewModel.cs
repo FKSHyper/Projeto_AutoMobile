@@ -30,6 +30,9 @@ namespace Projeto_AutoMobile.ViewModels.Camiao
         [Display(Name = "Capacidade de Carga (Kg)")]
         public int MaxCarga { get; set; }
 
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Data de Disponibilidade")]
         public DateTime? DataDisponibilidade { get; set; }
 
     }

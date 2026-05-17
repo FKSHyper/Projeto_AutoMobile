@@ -35,6 +35,8 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
         [Display(Name = "Máximo de Passageiros")]
         public int MaxPassageiros { get; set; }
 
+        [DataType(DataType.Date)]
+        [Display(Name = "Data de Disponibilidade")]
         public DateTime? DataDisponibilidade { get; set; }
     }
 }

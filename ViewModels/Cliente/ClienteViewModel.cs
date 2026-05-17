@@ -4,7 +4,7 @@ namespace Projeto_AutoMobile.ViewModels.Cliente
 {
     public class ClienteViewModel
     {
-    
+
         [Required(ErrorMessage = "Nome obrigatório")]
         public string Nome { get; set; }
 
@@ -14,7 +14,7 @@ namespace Projeto_AutoMobile.ViewModels.Cliente
         public string NIF { get; set; }
 
         [Required(ErrorMessage = "Carta de condução obrigatória")]
-        [RegularExpression(@"^[A-Z0-9]{5,20}$", ErrorMessage = "Formato de carta inválido")]
+        [RegularExpression(@"^[A-Z]\d{5,20}$", ErrorMessage = "Formato de carta inválido")]
         public string CartaConducao { get; set; }
 
         [Required(ErrorMessage = "Email obrigatório")]
