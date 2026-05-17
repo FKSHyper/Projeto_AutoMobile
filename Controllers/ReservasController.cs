@@ -41,11 +41,12 @@ namespace Projeto_AutoMobile.Controllers
 
         // POST: CALCULAR PREÇO (botão "Atualizar preço")
         [HttpPost]
-        public async Task<IActionResult> CalcularPreco(ReservaViewModel model, int? id)
+        public async Task<IActionResult> CalcularPreco(ReservaViewModel model, int? id, DateTime dataInicio, DateTime dataFim)
         {
             CarregarDados();
             ViewBag.SelectedId = id;
-
+            ViewBag.dataInicio = dataInicio.ToString("yyyy-MM-dd");
+            ViewBag.dataFim = dataFim.ToString("yyyy-MM-dd");
             var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
             string nomeDaVista = id == null ? "Create" : "Edit";
 
