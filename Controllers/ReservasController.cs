@@ -1,5 +1,4 @@
-﻿using Humanizer.DateTimeHumanizeStrategy;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Projeto_AutoMobile.Data;
@@ -68,7 +67,7 @@ namespace Projeto_AutoMobile.Controllers
                 return View(nomeDaVista, model);
             }
 
-            int dias = (model.DataFim - model.DataInicio).Days+1;
+            int dias = (model.DataFim - model.DataInicio).Days + 1;
 
             if (dias <= 0)
             {
@@ -125,7 +124,7 @@ namespace Projeto_AutoMobile.Controllers
                 return View(model);
             }
 
-            int dias = (model.DataFim - model.DataInicio).Days+1;
+            int dias = (model.DataFim - model.DataInicio).Days + 1;
 
             var reserva = new Reserva
             {
@@ -173,7 +172,7 @@ namespace Projeto_AutoMobile.Controllers
         {
             var reserva = await _context.Reservas.FindAsync(id);
             var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
-            int dias = (model.DataFim - model.DataInicio).Days+1;
+            int dias = (model.DataFim - model.DataInicio).Days + 1;
 
             if (reserva == null)
                 return NotFound();
@@ -233,7 +232,24 @@ namespace Projeto_AutoMobile.Controllers
 
             if (reserva != null)
             {
-                _context.Reservas.Remove(reserva);
+                _context.Reservas.Remove(reserva); // Volta a apagar da Base de Dados!
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Devolver Veículo (Soft Delete para manter a Faturação)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DevolverVeiculo(int id)
+        {
+            var reserva = await _context.Reservas.FindAsync(id);
+
+            if (reserva != null)
+            {
+                reserva.Concluida = true;
+                _context.Reservas.Update(reserva);
                 await _context.SaveChangesAsync();
             }
 

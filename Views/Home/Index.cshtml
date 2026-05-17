@@ -133,7 +133,7 @@
                             var reservasDoVeiculo = reservas.Where(r => r.VeiculoId == veiculo.Id).ToList();
 
                             // O veículo entra em modo Alugado logo a partir da DataInicio
-                            var reservaAtivaHoje = reservasDoVeiculo.FirstOrDefault(r => Model.DataAtual.Date >= r.DataInicio.Date);
+                            var reservaAtivaHoje = reservasDoVeiculo.FirstOrDefault(r => Model.DataAtual.Date >= r.DataInicio.Date && r.Concluida == false);
 
                             string estadoOficialTexto;
                             string badgeColor;
@@ -163,7 +163,7 @@
 
                                 // Procurar se existe alguma reserva agendada para o futuro
                                 var proximaReservaFutura = reservasDoVeiculo
-                                .Where(r => r.DataInicio.Date > Model.DataAtual.Date)
+                                .Where(r => r.DataInicio.Date > Model.DataAtual.Date && r.Concluida == false)
                                 .OrderBy(r => r.DataInicio)
                                 .FirstOrDefault();
 
