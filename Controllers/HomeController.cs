@@ -70,10 +70,29 @@ namespace Projeto_AutoMobile.Controllers
             // FILTRO DE ESTADO DO VEÍCULO:
             if (!string.IsNullOrEmpty(estadoSelecionado) && estadoSelecionado != "Todos")
             {
-                // Converte o estado selecionado para o enum correspondente
-                if (Enum.TryParse(typeof(EstadoVeiculo), estadoSelecionado, out var estadoConvertido))
+                if (estadoSelecionado == "Disponivel")
                 {
-                    resultados = resultados.Where(v => v.Estado == (EstadoVeiculo)estadoConvertido);
+                    // Para estar disponível, NÃO pode ter uma reserva ativa hoje
+                    // E NÃO pode estar em manutenção ativa
+                    resultados = resultados.Where(v =>
+                        !todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date > empresa.DataAtual.Date) &&
+                        !(v.Estado == EstadoVeiculo.EmManutencao && v.DataDisponibilidade.HasValue && v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date)
+                    );
+                }
+                else if (estadoSelecionado == "Alugado" || estadoSelecionado == "Reservado")
+                {
+                    // Para estar Alugado/Reservado, TEM de ter uma reserva onde a data de hoje encaixe no meio
+                    resultados = resultados.Where(v =>
+                        todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date > empresa.DataAtual.Date)
+                    );
+                }
+                else if (estadoSelecionado == "EmManutencao")
+                {
+                    // Tem de estar marcado como Manutenção E a data de fim ainda não pode ter passado
+                    resultados = resultados.Where(v =>
+                        v.Estado == EstadoVeiculo.EmManutencao &&
+                        (!v.DataDisponibilidade.HasValue || v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date)
+                    );
                 }
             }
 

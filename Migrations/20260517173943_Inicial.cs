@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Projeto_AutoMobile.Migrations
 {
     /// <inheritdoc />
-    public partial class inicial : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,9 +18,9 @@ namespace Projeto_AutoMobile.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NIF = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CartaConducao = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NIF = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CartaConducao = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Telemovel = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -47,7 +47,7 @@ namespace Projeto_AutoMobile.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Matricula = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Matricula = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Marca = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Modelo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PrecoDia = table.Column<double>(type: "float(8)", precision: 8, scale: 2, nullable: false),
@@ -81,7 +81,7 @@ namespace Projeto_AutoMobile.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DataInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataFim = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PrecoEstimado = table.Column<double>(type: "float", nullable: false),
+                    PrecoEstimado = table.Column<double>(type: "float(8)", precision: 8, scale: 2, nullable: false),
                     ClienteId = table.Column<int>(type: "int", nullable: false),
                     VeiculoId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -102,6 +102,29 @@ namespace Projeto_AutoMobile.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Empresas",
+                columns: new[] { "Id", "DataAtual" },
+                values: new object[] { 1, new DateTime(2026, 5, 17, 0, 0, 0, 0, DateTimeKind.Local) });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clientes_CartaConducao",
+                table: "Clientes",
+                column: "CartaConducao",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clientes_Email",
+                table: "Clientes",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clientes_NIF",
+                table: "Clientes",
+                column: "NIF",
+                unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_Reservas_ClienteId",
                 table: "Reservas",
@@ -116,6 +139,12 @@ namespace Projeto_AutoMobile.Migrations
                 name: "IX_Veiculos_EmpresaId",
                 table: "Veiculos",
                 column: "EmpresaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Veiculos_Matricula",
+                table: "Veiculos",
+                column: "Matricula",
+                unique: true);
         }
 
         /// <inheritdoc />
