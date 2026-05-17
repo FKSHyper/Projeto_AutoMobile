@@ -32,15 +32,15 @@ namespace Projeto_AutoMobile.Migrations
 
                     b.Property<string>("CartaConducao")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("NIF")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -51,6 +51,15 @@ namespace Projeto_AutoMobile.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartaConducao")
+                        .IsUnique();
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("NIF")
+                        .IsUnique();
 
                     b.ToTable("Clientes");
                 });
@@ -69,6 +78,13 @@ namespace Projeto_AutoMobile.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Empresas");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DataAtual = new DateTime(2026, 5, 17, 0, 0, 0, 0, DateTimeKind.Local)
+                        });
                 });
 
             modelBuilder.Entity("Projeto_AutoMobile.Data.Projeto_AutoMobile.Reserva", b =>
@@ -89,7 +105,8 @@ namespace Projeto_AutoMobile.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double>("PrecoEstimado")
-                        .HasColumnType("float");
+                        .HasPrecision(8, 2)
+                        .HasColumnType("float(8)");
 
                     b.Property<int>("VeiculoId")
                         .HasColumnType("int");
@@ -126,7 +143,7 @@ namespace Projeto_AutoMobile.Migrations
 
                     b.Property<string>("Matricula")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Modelo")
                         .IsRequired()
@@ -144,6 +161,9 @@ namespace Projeto_AutoMobile.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EmpresaId");
+
+                    b.HasIndex("Matricula")
+                        .IsUnique();
 
                     b.ToTable("Veiculos");
 

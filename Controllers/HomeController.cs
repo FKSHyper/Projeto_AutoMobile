@@ -70,10 +70,32 @@ namespace Projeto_AutoMobile.Controllers
             // FILTRO DE ESTADO DO VEÍCULO:
             if (!string.IsNullOrEmpty(estadoSelecionado) && estadoSelecionado != "Todos")
             {
-                // Converte o estado selecionado para o enum correspondente
-                if (Enum.TryParse(typeof(EstadoVeiculo), estadoSelecionado, out var estadoConvertido))
+                if (estadoSelecionado == "Disponivel")
                 {
-                    resultados = resultados.Where(v => v.Estado == (EstadoVeiculo)estadoConvertido);
+                    resultados = resultados.Where(v =>
+                        !todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date >= empresa.DataAtual.Date) &&
+                        !(v.Estado == EstadoVeiculo.EmManutencao && (!v.DataDisponibilidade.HasValue || v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date))
+                    );
+                }
+                else if (estadoSelecionado == "Alugado")
+                {
+                    resultados = resultados.Where(v =>
+                        todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date >= empresa.DataAtual.Date)
+                    );
+                }
+                else if (estadoSelecionado == "Reservado")
+                {
+                    resultados = resultados.Where(v =>
+                        todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date > empresa.DataAtual.Date) &&
+                        !todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date >= empresa.DataAtual.Date)
+                    );
+                }
+                else if (estadoSelecionado == "EmManutencao")
+                {
+                    resultados = resultados.Where(v =>
+                        v.Estado == EstadoVeiculo.EmManutencao &&
+                        (!v.DataDisponibilidade.HasValue || v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date)
+                    );
                 }
             }
 
