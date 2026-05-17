@@ -72,23 +72,26 @@ namespace Projeto_AutoMobile.Controllers
             {
                 if (estadoSelecionado == "Disponivel")
                 {
-                    // Para estar disponível, NÃO pode ter uma reserva ativa hoje
-                    // E NÃO pode estar em manutenção ativa
                     resultados = resultados.Where(v =>
-                        !todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date > empresa.DataAtual.Date) &&
-                        !(v.Estado == EstadoVeiculo.EmManutencao && v.DataDisponibilidade.HasValue && v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date)
+                        !todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date >= empresa.DataAtual.Date) &&
+                        !(v.Estado == EstadoVeiculo.EmManutencao && (!v.DataDisponibilidade.HasValue || v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date))
                     );
                 }
-                else if (estadoSelecionado == "Alugado" || estadoSelecionado == "Reservado")
+                else if (estadoSelecionado == "Alugado")
                 {
-                    // Para estar Alugado/Reservado, TEM de ter uma reserva onde a data de hoje encaixe no meio
                     resultados = resultados.Where(v =>
-                        todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date > empresa.DataAtual.Date)
+                        todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date >= empresa.DataAtual.Date)
+                    );
+                }
+                else if (estadoSelecionado == "Reservado")
+                {
+                    resultados = resultados.Where(v =>
+                        todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date > empresa.DataAtual.Date) &&
+                        !todasReservas.Any(r => r.VeiculoId == v.Id && r.DataInicio.Date <= empresa.DataAtual.Date && r.DataFim.Date >= empresa.DataAtual.Date)
                     );
                 }
                 else if (estadoSelecionado == "EmManutencao")
                 {
-                    // Tem de estar marcado como Manutenção E a data de fim ainda não pode ter passado
                     resultados = resultados.Where(v =>
                         v.Estado == EstadoVeiculo.EmManutencao &&
                         (!v.DataDisponibilidade.HasValue || v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date)
