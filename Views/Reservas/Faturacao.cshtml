@@ -1,7 +1,7 @@
 ﻿@model Projeto_AutoMobile.ViewModels.Veiculos.VeiculosDisponiveisViewModel
 @{
     ViewData["Title"] = "Faturação entre Datas";
-    var hoje = DateTime.Today();
+    var hoje = DateTime.Today;
     var primeiroDia = new DateTime(hoje.Year, hoje.Month, 1);
     var ultimoDia = primeiroDia.AddMonths(1).AddDays(-1);
     string inicioMes = primeiroDia.ToString("yyyy-MM-dd");
