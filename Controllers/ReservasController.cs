@@ -28,36 +28,21 @@ namespace Projeto_AutoMobile.Controllers
             return View(reservas);
         }
 
+
+
         // GET: Create
+        [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-
-            // Filtrar veículos que não têm reservas ativas hoje
-            ViewBag.Veiculos = new SelectList(
-                _context.Veiculos.Where(v =>
-                    !_context.Reservas.Any(r => r.VeiculoId == v.Id &&
-                                                r.DataInicio <= DateTime.Today &&
-                                                r.DataFim >= DateTime.Today)
-                ),
-                "Id", "Marca"
-            );
-
+            CarregarDados();
             return View(new ReservaViewModel());
         }
-
 
         // POST: CALCULAR PREÇO (botão "Atualizar preço")
         [HttpPost]
         public async Task<IActionResult> CalcularPreco(ReservaViewModel model, int? id)
         {
-            ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-            ViewBag.Veiculos = new SelectList(_context.Veiculos.Where(v =>!_context.Reservas.Any(r => r.VeiculoId == v.Id &&
-                                    r.DataInicio <= model.DataFim &&
-                                    r.DataFim >= model.DataInicio)
-                                    ),
-                                    "Id", "Marca"
-            );
+            CarregarDados();
             ViewBag.SelectedId = id;
 
             var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
@@ -99,28 +84,16 @@ namespace Projeto_AutoMobile.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ReservaViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-                ViewBag.Veiculos = new SelectList(
-                        _context.Veiculos.Where(v =>
-                                !_context.Reservas.Any(r => r.VeiculoId == v.Id &&
-                                            r.DataInicio <= model.DataFim &&
-                                            r.DataFim >= model.DataInicio)
-                        ),
-                        "Id", "Marca"
-                );
-                return View(model);
-            }
-
             if (model.DataInicio < DateTime.Today)
             {
                 ModelState.AddModelError("", "A data inicial não pode ser anterior a hoje.");
+
             }
 
             if (model.DataFim < model.DataInicio)
             {
                 ModelState.AddModelError("", "Datas inválidas.");
+
             }
 
             var veiculo = await _context.Veiculos.FindAsync(model.VeiculoId);
@@ -128,26 +101,25 @@ namespace Projeto_AutoMobile.Controllers
             if (veiculo == null)
             {
                 ModelState.AddModelError("", "Veículo inválido.");
+
+            }
+
+            //Impedir reservas sobrepostas
+            var existeReserva = await _context.Reservas
+               .Where(r => r.VeiculoId == model.VeiculoId &&
+                               r.DataInicio < model.DataFim &&
+                               r.DataFim > model.DataInicio)
+               .OrderBy(r => r.DataInicio)
+               .FirstOrDefaultAsync();
+
+            if (existeReserva != null)
+            {
+                ModelState.AddModelError("", $"Este veículo já está reservado no período de {existeReserva.DataInicio:dd-MM-yyyy} a {existeReserva.DataFim:dd-MM-yyyy}.");
             }
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-                ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
-                return View(model);
-            }
-
-            // Impedir reservas sobrepostas
-            bool existeReserva = await _context.Reservas
-                .AnyAsync(r => r.VeiculoId == model.VeiculoId &&
-                               r.DataInicio < model.DataFim &&
-                               r.DataFim > model.DataInicio);
-
-            if (existeReserva)
-            {
-                ModelState.AddModelError("", "Este veículo já está reservado para o período selecionado.");
-                ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
-                ViewBag.Veiculos = new SelectList(_context.Veiculos, "Id", "Marca");
+                CarregarDados();
                 return View(model);
             }
 
@@ -163,20 +135,7 @@ namespace Projeto_AutoMobile.Controllers
             };
 
             _context.Reservas.Add(reserva);
-
-            // Atualizar estado do veículo conforme a data da reserva
-            if (model.DataInicio.Date == DateTime.Today)
-            {
-                veiculo.Estado = EstadoVeiculo.Alugado;
-            }
-            else if (model.DataInicio.Date > DateTime.Today)
-            {
-                // Mantém disponível até à data, mas pode ser marcado como "Reservado" para consultas futuras
-                veiculo.Estado = EstadoVeiculo.Reservado;
-            }
-
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -259,6 +218,32 @@ namespace Projeto_AutoMobile.Controllers
         public IActionResult Faturacao()
         {
             return View();
+        }
+
+        private void CarregarDados() // Método para carregar os dados dos dropdowns
+        {
+            var clientesDropdown = _context.Clientes.Select(c => new
+            {
+                Id = c.Id,
+                Descricao = c.Nome + " | " + c.CartaConducao
+            });
+            ViewBag.Clientes = new SelectList(clientesDropdown, "Id", "Descricao");
+
+            // Filtrar veículos que não têm reservas ativas hoje
+
+            var veiculosFiltrados = _context.Veiculos.Where(v =>
+                    !_context.Reservas.Any(r => r.VeiculoId == v.Id &&
+                                                r.DataInicio <= DateTime.Today &&
+                                                r.DataFim >= DateTime.Today)
+                );
+
+            var veiculosDropdown = veiculosFiltrados.Select(v => new
+            {
+                Id = v.Id,
+                Descricao = v.Marca + " | " + v.Matricula,
+                TipoVeiculo = v.TipoVeiculo
+            });
+            ViewBag.Veiculos = new SelectList(veiculosDropdown, "Id", "Descricao", "", "TipoVeiculo");
         }
 
         // POST: Faturacao
