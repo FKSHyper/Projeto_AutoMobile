@@ -26,7 +26,6 @@ namespace Projeto_AutoMobile.Data.Projeto_AutoMobile
         public string Matricula { get; set; } = string.Empty;
         public string Marca { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
-        public string TipoVeiculo { get; set; } = string.Empty;
 
         [Precision(8, 2)]
         public double PrecoDia { get { return _precoDia; } set { _precoDia = Math.Round(value, 2); } }

@@ -237,11 +237,12 @@ namespace Projeto_AutoMobile.Controllers
                                                 r.DataFim >= DateTime.Today)
                 );
 
-            var veiculosDropdown = veiculosFiltrados.Select(v => new
+            var veiculosDropdown = veiculosFiltrados.ToList().Select(v => new
             {
                 Id = v.Id,
                 Descricao = v.Marca + " | " + v.Matricula,
-                TipoVeiculo = v.TipoVeiculo
+                TipoVeiculo = v.GetType().Name
+
             });
             ViewBag.Veiculos = new SelectList(veiculosDropdown, "Id", "Descricao", "", "TipoVeiculo");
         }
