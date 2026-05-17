@@ -36,9 +36,13 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">@*MUDAR*@
+                        <div class="col-md-6 mb-3">
                             <label asp-for="NrPortas" class="form-label fw-bold">Nº de Portas</label>
-                            <input asp-for="NrPortas" class="form-control" />
+                            <select asp-for="NrPortas" class="form-select">
+                                <option value="" disabled selected>Selecione o nº de portas...</option>
+                                <option value="3">3 Portas</option>
+                                <option value="5">5 Portas</option>
+                            </select>
                             <span asp-validation-for="NrPortas" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
