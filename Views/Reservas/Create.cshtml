@@ -19,12 +19,12 @@
                 <div class="card-body p-4">
                     <div class="mb-3">
                         <label asp-for="DataInicio" class="form-label fw-bold">Data de Início</label>
-                        <input asp-for="DataInicio" type="date" class="form-control" min="@hoje" />
+                        <input asp-for="DataInicio" type="date" class="form-control" min="@hoje" value="@hoje"/>
                         <span asp-validation-for="DataInicio" class="text-danger "></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="DataFim" class="form-label fw-bold">Data de Fim</label>
-                        <input asp-for="DataFim" type="date" class="form-control" min="@hoje" />
+                        <input asp-for="DataFim" type="date" class="form-control" min="@hoje" value="@hoje"/>
                         <span asp-validation-for="DataFim" class="text-danger "></span>
                     </div>
                     <div class="mb-3">

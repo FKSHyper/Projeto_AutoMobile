@@ -16,7 +16,7 @@
         <ul class="details-list">
             <li><strong>Matrícula:</strong>@selectedMota.Matricula</li>
             <li><strong>Estado:</strong>@selectedMota.Estado</li>
-            <li><strong>Cilindrada:</strong>@selectedMota.Cilindrada</li>
+            <li><strong>Cilindrada:</strong>@selectedMota.Cilindrada cc</li>
             <li><strong>Preço/Dia:</strong>@selectedMota.PrecoDia.ToString("C")</li>
             <li><strong>Disponibilidade:</strong>@selectedMota.DataDisponibilidade</li>
         </ul>
@@ -46,7 +46,7 @@
             <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Motas", new { id = item.Id })'">
                 <td>@item.Matricula</td>
                 <td>@item.Marca @item.Modelo</td>
-                <td>@item.Cilindrada</td>
+                <td>@item.Cilindrada cc</td>
                 <td>@item.PrecoDia.ToString("C")</td>
                 <td class="text-end action-cell" onclick="event.stopPropagation();">
                     <partial name="_TabelaAcoes" model="item.Id" />
