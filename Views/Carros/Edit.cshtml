@@ -85,7 +85,11 @@
                     <div class="row" id="dataSelected" style="display: none;">
                         <div class="mb-3">
                             <label asp-for="DataDisponibilidade" class="form-label fw-bold"></label>
-                            <input asp-for="DataDisponibilidade" class="form-control" value="@Model.DataDisponibilidade" />
+                            <input type="date"
+                                   asp-for="DataDisponibilidade"
+                                   asp-format="{0:yyyy-MM-dd}"
+                                   min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                   class="form-control" />
                             <span asp-validation-for="DataDisponibilidade" class="text-danger small"></span>
                         </div>  
                     </div>

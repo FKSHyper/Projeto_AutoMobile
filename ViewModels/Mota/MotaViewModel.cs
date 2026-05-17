@@ -1,5 +1,5 @@
-﻿using Projeto_AutoMobile.Data.Projeto_AutoMobile;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Projeto_AutoMobile.Data.Projeto_AutoMobile;
 
 namespace Projeto_AutoMobile.ViewModels.Mota
 {
@@ -24,8 +24,12 @@ namespace Projeto_AutoMobile.ViewModels.Mota
         public EstadoVeiculo Estado { get; set; }
 
         [Required(ErrorMessage = "A cilindrada é obrigatória.")]
-        [RegularExpression(@"^(50cc|125cc|300cc)$", ErrorMessage = "A cilindrada de uma mota tem de ser obrigatoriamente 50cc, 125cc ou 300cc.")]
+        [RegularExpression(@"^(50|125|300)$", ErrorMessage = "A cilindrada de uma mota tem de ser obrigatoriamente 50cc, 125cc ou 300cc.")]
+        [Display(Name = "Cilindrada (cc)")]
         public string Cilindrada { get; set; } = string.Empty;
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Data de Disponibilidade")]
         public DateTime? DataDisponibilidade { get; set; }
     }
 }
