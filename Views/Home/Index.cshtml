@@ -94,9 +94,14 @@
                     <option value="EmManutencao" selected="@(Model.EstadoSelecionado == "EmManutencao")">Em Manutenção</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100 fw-bold">
                     <i class="bi bi-funnel"></i> Aplicar Filtros
+                </button>
+            </div>
+            <div class="col-md-2">
+                <button asp-controller="Home" asp-action="ExportarCSV" class="btn btn-primary w-100 fw-bold">
+                    <i class="fas fa-file-csv"></i> Exportar Frota (CSV)
                 </button>
             </div>
         </form>

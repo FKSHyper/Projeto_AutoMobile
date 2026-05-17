@@ -193,7 +193,8 @@ namespace Projeto_AutoMobile.Controllers
             var existeReserva = await _context.Reservas
                .Where(r => r.VeiculoId == model.VeiculoId &&
                                r.DataInicio < model.DataFim &&
-                               r.DataFim > model.DataInicio)
+                               r.DataFim > model.DataInicio &&
+                               r.Id != id)
                .OrderBy(r => r.DataInicio)
                .FirstOrDefaultAsync();
 
