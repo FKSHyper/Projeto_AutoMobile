@@ -2,24 +2,25 @@
 {
     public class Reserva
     {
-   
-            public int Id { get; set; }
 
-            public DateTime DataInicio { get; set; }
+        public int Id { get; set; }
 
-            public DateTime DataFim { get; set; }
-            
-            public double PrecoEstimado { get; set; }
+        public DateTime DataInicio { get; set; }
 
-            // Foreign Keys
-            public int ClienteId { get; set; }
+        public DateTime DataFim { get; set; }
 
-            public int VeiculoId { get; set; }
+        public double PrecoEstimado { get; set; }
 
-            // Navigation Properties
-            public Cliente Cliente { get; set; }
+        // Foreign Keys
+        public int ClienteId { get; set; }
 
-            public Veiculo Veiculo { get; set; }
-        
+        public int VeiculoId { get; set; }
+
+        // Navigation Properties
+        public Cliente Cliente { get; set; }
+
+        public Veiculo Veiculo { get; set; }
+        public bool Concluida { get; set; } = false;
+
     }
 }

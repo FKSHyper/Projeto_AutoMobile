@@ -15,6 +15,18 @@
     @if (selectedReserva != null)
     {
         <ul class="details-list">
+            <li>
+                <strong>Estado:</strong>
+                @if (selectedReserva.Concluida)
+                {
+                    <span class="badge bg-secondary">Devolvido</span>
+                }
+                else
+                {
+
+                    <span class="badge bg-success">Ativa</span>
+                }
+            </li>
             <li><strong>Data de Ínicio:</strong>@selectedReserva.DataInicio.ToShortDateString()</li>
             <li><strong>Data de Fim:</strong>@selectedReserva.DataFim.ToShortDateString()</li>
             <li><strong>Cliente:</strong>@selectedReserva.Cliente.Nome, @selectedReserva.Cliente.CartaConducao</li>
@@ -44,16 +56,35 @@
     <tbody>
         @foreach (var item in Model)
         {
-            string activeClass = (item.Id == selectedId) ? "table-selected" : "";
+            // ADICIONADO: Se não estiver selecionada mas estiver concluída, fica cinzenta (table-light text-muted)
+            string activeClass = (item.Id == selectedId) ? "table-selected" : (item.Concluida ? "table-light text-muted opacity-75" : "");
 
-            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Reservas", new { id = item.Id })'"">
-                <td>@item.Cliente.Nome</td>
+            <tr class="@activeClass cursor-pointer" onclick="location.href='@Url.Action("Index", "Reservas", new { id = item.Id })'">
+                <td>
+                    <span class="@(item.Concluida ? "text-decoration-line-through" : "")">@item.Cliente.Nome</span>
+                    @if (item.Concluida)
+                    {
+                        <span class="badge bg-secondary ms-1">Devolvido</span>
+                    }
+                </td>
                 <td>@item.Veiculo.GetType().Name | @item.Veiculo.Matricula</td>
                 <td>@item.DataInicio.ToShortDateString()</td>
                 <td>@item.DataFim.ToShortDateString()</td>
                 <td>@item.PrecoEstimado €</td>
                 <td class="text-end action-cell" onclick="event.stopPropagation();">
-                    <partial name="_TabelaAcoes" model="item.Id" />
+                    <div class="d-flex justify-content-end align-items-center gap-1">
+
+                        @if (!item.Concluida)
+                        {
+                            <form asp-action="DevolverVeiculo" asp-route-id="@item.Id" method="post" class="m-0">
+                                <button type="submit" class="btn btn-sm btn-outline-success" title="Registar Devolução do Veículo">
+                                    <i class="bi bi-check-circle"></i>
+                                </button>
+                            </form>
+                        }
+
+                        <partial name="_TabelaAcoes" model="item.Id" />
+                    </div>
                 </td>
             </tr>
         }

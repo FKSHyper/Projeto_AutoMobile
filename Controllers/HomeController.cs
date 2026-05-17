@@ -42,7 +42,7 @@ namespace Projeto_AutoMobile.Controllers
 
             foreach (var veiculo in frota)
             {
-                var reservaNoPrazoLimite = todasReservas.FirstOrDefault(r => r.VeiculoId == veiculo.Id && empresa.DataAtual.Date >= r.DataFim.Date);
+                var reservaNoPrazoLimite = todasReservas.FirstOrDefault(r => r.VeiculoId == veiculo.Id && empresa.DataAtual.Date >= r.DataFim.Date && r.Concluida == false);
 
                 if (reservaNoPrazoLimite != null)
                 {
@@ -70,11 +70,36 @@ namespace Projeto_AutoMobile.Controllers
             // FILTRO DE ESTADO DO VEÍCULO:
             if (!string.IsNullOrEmpty(estadoSelecionado) && estadoSelecionado != "Todos")
             {
-                // Converte o estado selecionado para o enum correspondente
-                if (Enum.TryParse(typeof(EstadoVeiculo), estadoSelecionado, out var estadoConvertido))
+                var veiculosFiltrados = new List<Veiculo>();
+
+                foreach (var v in resultados)
                 {
-                    resultados = resultados.Where(v => v.Estado == (EstadoVeiculo)estadoConvertido);
+                    // Descobrir se o veículo tem uma reserva ativa e que NÃO esteja concluída
+                    var reservaAtiva = todasReservas.FirstOrDefault(r => r.VeiculoId == v.Id && empresa.DataAtual.Date >= r.DataInicio.Date && r.Concluida == false);
+
+                    string estadoNoSimulador = "Disponivel";
+
+                    if (v.Estado == EstadoVeiculo.EmManutencao)
+                    {
+                        estadoNoSimulador = "EmManutencao";
+                    }
+                    else if (reservaAtiva != null)
+                    {
+                        estadoNoSimulador = "Alugado";
+                    }
+                    else if (v.Estado == EstadoVeiculo.Reservado)
+                    {
+                        estadoNoSimulador = "Reservado";
+                    }
+
+                    // Se o estado real simulado coincidir com o filtro, mantemos na lista
+                    if (estadoNoSimulador == estadoSelecionado)
+                    {
+                        veiculosFiltrados.Add(v);
+                    }
                 }
+
+                resultados = veiculosFiltrados.AsEnumerable();
             }
 
             // Montar os dados para o ecrã
