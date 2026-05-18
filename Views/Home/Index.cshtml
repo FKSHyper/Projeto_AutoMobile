@@ -52,19 +52,19 @@
             </form>
 
             <script>
-                // Initialize JS Date with Server Date
+                // Definir a data do JS
                 let currentDate = new Date('@dataAtual.ToString("yyyy-MM-ddTHH:mm:ss")');
 
                 function changeDate(daysToAdd) {
-                    // Change the date
+                    // Mudar a data
                     currentDate.setDate(currentDate.getDate() + daysToAdd);
-                    // Format as yyyy-MM-dd for C#
+                    // Formatar a data para o C#
                     const year = currentDate.getFullYear();
                     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
                     const day = String(currentDate.getDate()).padStart(2, '0');
-                    // Update hidden input
+                    // Atualizar hidden input
                     document.getElementById('hiddenDataAtual').value = `${year}-${month}-${day}`;
-                    // Auto-submit the form to the Controller immediately
+                    // Entrega automatica ao Form
                     document.getElementById('dateForm').submit();
                 }
             </script>
