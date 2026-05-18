@@ -67,7 +67,7 @@ namespace Projeto_AutoMobile.Controllers
                 resultados = resultados.Where(v => v.GetType().Name == tipoSelecionado);
             }
 
-            // FILTRO DE ESTADO DO VEÍCULO (Código Unificado):
+            // FILTRO DE ESTADO DO VEÍCULO
             if (!string.IsNullOrEmpty(estadoSelecionado) && estadoSelecionado != "Todos")
             {
                 var veiculosFiltrados = new List<Veiculo>();
@@ -76,22 +76,19 @@ namespace Projeto_AutoMobile.Controllers
                 {
                     string estadoNoSimulador = "Disponivel"; // Estado por defeito
 
-                    // 1. Regra de Manutenção (A lógica do teu colega)
                     bool estaEmManutencao = v.Estado == EstadoVeiculo.EmManutencao &&
                                             (!v.DataDisponibilidade.HasValue || v.DataDisponibilidade.Value.Date >= empresa.DataAtual.Date);
 
-                    // 2. Regra de Alugado (A lógica do teu colega + O teu "Concluida == false")
                     bool estaAlugado = todasReservas.Any(r => r.VeiculoId == v.Id &&
                                                               r.Concluida == false &&
                                                               r.DataInicio.Date <= empresa.DataAtual.Date &&
                                                               r.DataFim.Date >= empresa.DataAtual.Date);
 
-                    // 3. Regra de Reservado (A lógica do teu colega + O teu "Concluida == false")
                     bool temReservaFutura = todasReservas.Any(r => r.VeiculoId == v.Id &&
                                                                    r.Concluida == false &&
                                                                    r.DataInicio.Date > empresa.DataAtual.Date);
 
-                    // 4. A TUA HIERARQUIA: Decide o estado final do veículo neste exato dia
+                    // Decide o estado final do veículo neste exato dia
                     if (estaEmManutencao)
                     {
                         estadoNoSimulador = "EmManutencao";
@@ -105,7 +102,7 @@ namespace Projeto_AutoMobile.Controllers
                         estadoNoSimulador = "Reservado";
                     }
 
-                    // 5. O TEU FILTRO: Se o estado simulado bater certo com a Dropdown, adiciona à lista
+                    // Se o estado simulado bater certo com a Dropdown, adiciona à lista
                     if (estadoNoSimulador == estadoSelecionado)
                     {
                         veiculosFiltrados.Add(v);
