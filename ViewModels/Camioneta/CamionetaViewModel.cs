@@ -6,7 +6,7 @@ namespace Projeto_AutoMobile.ViewModels.Camioneta
     public class CamionetaViewModel
     {
         [Required(ErrorMessage = "A matrícula é obrigatória.")]
-        [RegularExpression(@"^([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})$",
+        [RegularExpression(@"^([A-Z]{2}-[0-9]{2}-[0-9]{2}|[0-9]{2}-[A-Z]{2}-[0-9]{2}|[0-9]{2}-[0-9]{2}-[A-Z]{2})$",
         ErrorMessage = "Formato inválido. A matricula deve ter um dos seguintes formatos: AA-00-11, 00-AA-11, 11-00-AA.")]
         [Display(Name = "Matrícula")]
         public string Matricula { get; set; }

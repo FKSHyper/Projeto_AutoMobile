@@ -7,7 +7,7 @@ namespace Projeto_AutoMobile.ViewModels.Carro
     {
         private double _precoDia;
 
-        [RegularExpression(@"^([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})-([A-Z]{2}|[0-9]{2})$",
+        [RegularExpression(@"^([A-Z]{2}-[0-9]{2}-[0-9]{2}|[0-9]{2}-[A-Z]{2}-[0-9]{2}|[0-9]{2}-[0-9]{2}-[A-Z]{2})$",
         ErrorMessage = "Formato inválido. A matricula deve ter um dos seguintes formatos: AA-00-11, 00-AA-11, 11-00-AA.")]
         [Required(ErrorMessage = "A matrícula é obrigatória.")]
         [Display(Name = "Matrícula")]
