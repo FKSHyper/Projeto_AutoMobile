@@ -8,7 +8,6 @@
 
         public virtual ICollection<Veiculo> Frota { get; set; } = new List<Veiculo>();
 
-        // Guarda a data atual para o SIM
         public DateTime DataAtual { get; set; }
 
         public Empresa()
@@ -33,10 +32,8 @@
 
         public List<string> AvancarDia()
         {
-            // Avança a data em um dia
             DataAtual = DataAtual.AddDays(1);
 
-            // Lista para armazenar alarmes 
             List<string> alarmes = new List<string>();
 
             // Verificar o estado de cada veículo
@@ -55,10 +52,8 @@
         }
         public List<string> RecuarDia()
         {
-            // Avança a data em um dia
             DataAtual = DataAtual.AddDays(-1);
 
-            // Lista para armazenar alarmes 
             List<string> alarmes = new List<string>();
 
             // Verificar o estado de cada veículo

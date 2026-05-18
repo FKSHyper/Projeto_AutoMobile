@@ -129,7 +129,7 @@
                     {
                         @foreach (var veiculo in Model.Veiculos)
                         {
-                            // 1. Filtrar as reservas deste veículo específico
+                            // Filtrar as reservas deste veículo específico
                             var reservasDoVeiculo = reservas.Where(r => r.VeiculoId == veiculo.Id).ToList();
 
                             // O veículo entra em modo Alugado logo a partir da DataInicio
@@ -157,7 +157,7 @@
                             }
                             else
                             {
-                                // Não tem reserva hoje (Está Disponível)
+                                // Não tem reserva hoje
                                 estadoOficialTexto = "Disponível";
                                 badgeColor = "bg-success";
 
